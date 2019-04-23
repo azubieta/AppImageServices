@@ -33,3 +33,5 @@
 
 # CLion project configurations
 .idea
+cmake-build-*
+docker-build-*
