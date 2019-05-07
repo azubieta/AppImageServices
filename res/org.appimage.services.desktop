@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=appimage-services
+Comment=App
+TryExec=appimage-services
+Exec=appimage-services
+Icon=appimage_logo
+Categories=Utility;
+NoDisplay=true

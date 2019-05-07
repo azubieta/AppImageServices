@@ -7,10 +7,12 @@
 
 // local
 #include "DBusResponseType.h"
+#include "LauncherService.h"
+#include "LauncherDefines.h"
 
 class DBusInterface : public QObject {
 Q_OBJECT
-    Q_CLASSINFO("D-Bus Interface", "org.appimage.Services.Launcher")
+    Q_CLASSINFO("D-Bus Interface", LAUNCHER_DBUS_INTERFACE_NAME)
 
 public:
     explicit DBusInterface(QObject* parent = nullptr);
@@ -34,5 +36,8 @@ public Q_SLOTS:
      * @return
      */
     bool unregisterApp(const QString& appImagePath);
+
+private:
+    LauncherService launcherService;
 };
 

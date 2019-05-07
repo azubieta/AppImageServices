@@ -1,8 +1,23 @@
 [requires]
-qt/5.12.2@bincrafters/stable
+libpng/1.6.36@bincrafters/stable
+qt/5.12.3@appimage-conan-community/stable
+xdg-utils-cxx/0.1.1@appimage-conan-community/stable
+libappimage/1.0.0@appimage-conan-community/stable
+
+
+[build_requires]
+patchelf_installer/0.9@appimage-conan-community/stable
 gtest/1.8.1@bincrafters/stable
+glib/2.40.0@appimage-conan-community/stable
+cmake_installer/3.14.3@conan/stable
+linuxdeploy/continuous@appimage-conan-community/stable
+linuxdeploy-plugin-qt/continuous@appimage-conan-community/stable
+linuxdeploy-plugin-appimage/continuous@appimage-conan-community/stable
 
 [generators]
 cmake_paths
 qt
-virtualenv
+virtualrunenv
+
+[options]
+glib:shared=True
