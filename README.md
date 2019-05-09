@@ -19,24 +19,25 @@ _This service must be considered an enhancement to the AppImage UX but not a man
 
 ## D-Bus Interface
 ```
-org.appimage.Services.Launcher
+org.appimage.Services1.Launcher
 \- launch ( String appImagePath )
 \- register ( String appImagePath )
 \- unregister ( String appImagePath )
+\- listRegisteredApplications
 
-org.appimage.Services.Updater
+org.appimage.Services1.Updater
 \- checkUpdates ( String appImagePath )
 \- update ( String appImagePath )
 \- rollback ( String appImagePath )
 
-org.appimage.Services.Updater.Task
+org.appimage.Services1.Updater.Task
 \- tasks
 
-org.appimage.Services.Inspector
+org.appimage.Services1.Inspector
 \- inspect ( String appImagePath )
 \- verifySignature ( String appImagePath )
 
-org.appimamge.Services.Self
+org.appimamge.Services1.Self
 \- checkUpdates
 \- update
 \- rollback
