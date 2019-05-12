@@ -1,3 +1,6 @@
+#include(export_pkg_config_path.cmake)
+
+find_package(PkgConfig)
 add_subdirectory(launcher)
 
 find_package(Qt5 CONFIG REQUIRED Core)

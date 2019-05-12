@@ -1,18 +1,10 @@
-find_package (Threads)
-find_package(PkgConfig REQUIRED)
-pkg_search_module(fuse REQUIRED IMPORTED_TARGET fuse)
-pkg_search_module(squashfuse REQUIRED IMPORTED_TARGET squashfuse)
-pkg_search_module(zlib REQUIRED IMPORTED_TARGET zlib)
-pkg_search_module(lzma REQUIRED IMPORTED_TARGET lzma)
+find_package(Threads)
+pkg_search_module(squashfuse2 REQUIRED IMPORTED_TARGET squashfuse)
 
 add_executable(appimage-type2-runtime main.c elf.c utils.c)
-
-get_target_property(LIBAPPIMAGE_INCLUDE_DIRS libappimage INTERFACE_INCLUDE_DIRECTORIES)
-
-target_include_directories(appimage-type2-runtime PRIVATE ${LIBAPPIMAGE_INCLUDE_DIRS})
 target_link_libraries(
     appimage-type2-runtime
-    PRIVATE PkgConfig::squashfuse dl PkgConfig::fuse PkgConfig::lzma PkgConfig::zlib ${CMAKE_THREAD_LIBS_INIT} runtimes-shared
+    PRIVATE PkgConfig::squashfuse2 runtimes-shared ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS}
 )
 
 target_compile_definitions(

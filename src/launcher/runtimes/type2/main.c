@@ -29,7 +29,7 @@
 
 #define _GNU_SOURCE
 
-#include "squashfuse.h"
+#include <squashfuse.h>
 #include <squashfs_fs.h>
 #include <nonstd.h>
 

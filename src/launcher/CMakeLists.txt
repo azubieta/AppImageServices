@@ -2,6 +2,9 @@ find_package(libappimage REQUIRED)
 find_package(Qt5 CONFIG REQUIRED Core DBus)
 find_package(XdgUtils REQUIRED COMPONENTS DesktopEntry)
 
+# Runtimes
+add_subdirectory(runtimes)
+
 set(
     AppImageServicesLauncherSRCS
     LauncherService.cpp
@@ -50,6 +53,3 @@ install(
     DESTINATION ${CMAKE_INSTALL_DATADIR}/dbus-1/interfaces
     COMPONENT AppImageServicesAPI
 )
-
-# Runtimes
-add_subdirectory(runtimes)
