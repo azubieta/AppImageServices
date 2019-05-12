@@ -2,6 +2,12 @@ find_package(libappimage REQUIRED)
 find_package(Qt5 CONFIG REQUIRED Core DBus)
 find_package(XdgUtils REQUIRED COMPONENTS DesktopEntry)
 
+set(
+    AppImageServicesLauncherSRCS
+    LauncherService.cpp
+    DBusInterface.cpp
+)
+
 # Generate the xml interface file from DBusInterface.h
 qt5_generate_dbus_interface(
     # header
@@ -14,7 +20,7 @@ qt5_generate_dbus_interface(
 
 # Create a launcher adaptor (header and implementation file) from the xml file
 qt5_add_dbus_adaptor(
-    AppImageServicesSRCS
+    AppImageServicesLauncherSRCS
     # xmlfile
     ${CMAKE_CURRENT_BINARY_DIR}/org.appimage.Services.Launcher.xml
     # parentheader
@@ -24,18 +30,19 @@ qt5_add_dbus_adaptor(
 )
 set(CMAKE_AUTOMOC ON)
 
-add_library(AppImageServicesLauncher OBJECT LauncherService.cpp ${AppImageServicesSRCS} DBusInterface.cpp)
+
+add_library(AppImageServicesLauncher OBJECT ${AppImageServicesLauncherSRCS})
 
 target_include_directories(
     AppImageServicesLauncher
-    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
-    PRIVATE ${CMAKE_CURRENT_BINARY_DIR}
+    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
+    PUBLIC ${CMAKE_CURRENT_BINARY_DIR}
 )
 
-target_link_libraries(AppImageServicesLauncher
-    PUBLIC Qt5::DBus libappimage
-    PRIVATE Qt5::Core XdgUtils::DesktopEntry
-    )
+target_link_libraries(
+    AppImageServicesLauncher
+    PUBLIC Qt5::DBus Qt5::Core libappimage XdgUtils::DesktopEntry
+)
 
 # Install D-Bus interface descriptor
 install(
@@ -43,3 +50,6 @@ install(
     DESTINATION ${CMAKE_INSTALL_DATADIR}/dbus-1/interfaces
     COMPONENT AppImageServicesAPI
 )
+
+# Runtimes
+add_subdirectory(runtimes)

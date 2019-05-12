@@ -11,6 +11,8 @@ public:
 
     bool unregisterApp(const std::string& appImagePath) const;
 
+    bool launch(const std::string& path, const QStringList& args) const;
+
 private:
     appimage::desktop_integration::IntegrationManager integrationManager;
 

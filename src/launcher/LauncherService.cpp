@@ -3,6 +3,7 @@
 #include <fstream>
 
 // libraries
+#include <QDebug>
 #include <QProcess>
 #include <QCoreApplication>
 #include <appimage/appimage.h>
@@ -66,4 +67,14 @@ void LauncherService::registerAppAddRemoveDesktopEntryAction(const std::string& 
         std::ofstream ofstream(desktopFilePath);
         ofstream << entry;
     }
+}
+
+bool LauncherService::launch(const std::string& path, const QStringList& args) const {
+    QProcess process;
+    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+    env.insert("TARGET_APPIMAGE", QString::fromStdString(path));
+    process.setProcessEnvironment(env);
+    process.setArguments(args);
+    process.setProgram("appimage-type2-runtime");
+    return process.startDetached();
 }

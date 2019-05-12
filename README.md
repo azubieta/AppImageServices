@@ -20,7 +20,7 @@ _This service must be considered an enhancement to the AppImage UX but not a man
 ## D-Bus Interface
 ```
 org.appimage.Services1.Launcher
-\- launch ( String appImagePath )
+\- launch ( String appImagePath , StringList args )
 \- register ( String appImagePath )
 \- unregister ( String appImagePath )
 \- listRegisteredApplications

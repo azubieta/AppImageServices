@@ -23,20 +23,29 @@ DBusInterface::DBusInterface(QObject* parent) : QObject(parent) {
 
 }
 
-bool DBusInterface::registerApp(const QString& appImagePath) {
+bool DBusInterface::registerApp(const QString& appImagePath) const {
     qDebug() << __FUNCTION__ << " : " << appImagePath;
-    if (appImagePath.startsWith("file://"))
-        return launcherService.registerApp(appImagePath.mid(7).toStdString());
-    else
-        return launcherService.registerApp(appImagePath.toStdString());
+    QString newPath = removeUriProtocolFromPath(appImagePath);
+    return launcherService.registerApp(appImagePath.toStdString());
 }
 
-bool DBusInterface::unregisterApp(const QString& appImagePath) {
+bool DBusInterface::unregisterApp(const QString& appImagePath) const {
     qDebug() << __FUNCTION__ << " : " << appImagePath;
-    if (appImagePath.startsWith("file://"))
-        return launcherService.unregisterApp(appImagePath.mid(7).toStdString());
+    QString newPath = removeUriProtocolFromPath(appImagePath);
+    return launcherService.unregisterApp(newPath.toStdString());
+}
+
+bool DBusInterface::launch(const QString& appImagePath, const QStringList& args) const {
+    qDebug() << __FUNCTION__ << " : " << appImagePath;
+    QString newPath = removeUriProtocolFromPath(appImagePath);
+    return launcherService.launch(newPath.toStdString(), args);
+}
+
+QString DBusInterface::removeUriProtocolFromPath(const QString& path) {
+    if (path.startsWith("file://"))
+        return path.mid(7);
     else
-        return launcherService.unregisterApp(appImagePath.toStdString());
+        return path;
 }
 
 DBusInterface::~DBusInterface() = default;
