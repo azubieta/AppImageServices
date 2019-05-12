@@ -70,11 +70,34 @@ void LauncherService::registerAppAddRemoveDesktopEntryAction(const std::string& 
 }
 
 bool LauncherService::launch(const std::string& path, const QStringList& args) const {
-    QProcess process;
-    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
-    env.insert("TARGET_APPIMAGE", QString::fromStdString(path));
-    process.setProcessEnvironment(env);
-    process.setArguments(args);
-    process.setProgram("appimage-type2-runtime");
-    return process.startDetached();
+    try {
+        appimage::core::AppImage appImage(path);
+
+        // Set TARGET_APPIMAGE environment variable
+        QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+        env.insert("TARGET_APPIMAGE", QString::fromStdString(path));
+
+        // Configure runtime process
+        QProcess process;
+        process.setProcessEnvironment(env);
+        process.setArguments(args);
+
+        switch (appImage.getFormat()) {
+            case appimage::core::AppImageFormat::TYPE_1:
+                process.setProgram("appimage-type1-runtime");
+                break;
+            case appimage::core::AppImageFormat::TYPE_2:
+                process.setProgram("appimage-type2-runtime");
+                break;
+            default:
+                qWarning() << "Unsupported AppImage format";
+                return false;
+        }
+
+        return process.startDetached();
+    } catch (appimage::core::AppImageError& error) {
+        return false;
+    }
+
+
 }

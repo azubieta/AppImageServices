@@ -11,10 +11,14 @@ class AppImageServices(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
 
     requires = (("libpng/1.6.36@bincrafters/stable"),
+                ("glib/2.40.0@appimage-conan-community/stable"),
                 ("qt/5.12.3@appimage-conan-community/stable"),
                 ("xdg-utils-cxx/0.1.1@appimage-conan-community/stable"),
                 ("libappimage/1.0.0@appimage-conan-community/stable"),
                 ("squashfuse/0.1.103@appimage-conan-community/stable"))
+
+    default_options = {"glib:shared": True}
+
 
     build_requires = ("patchelf_installer/0.9@appimage-conan-community/stable",
                       "gtest/1.8.1@bincrafters/stable",
