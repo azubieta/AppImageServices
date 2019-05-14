@@ -1,6 +1,6 @@
 find_package(Threads)
 find_package(PkgConfig REQUIRED)
-pkg_search_module(glib REQUIRED IMPORTED_TARGET glib-2.0)
+pkg_search_module(glib REQUIRED IMPORTED_TARGET glib glib-2.0)
 pkg_search_module(fuse REQUIRED IMPORTED_TARGET fuse)
 pkg_search_module(zlib REQUIRED IMPORTED_TARGET zlib)
 
