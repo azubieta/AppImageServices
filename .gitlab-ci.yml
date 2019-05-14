@@ -14,8 +14,8 @@ build:AppImage:
 
     # Original cmake binaries are faulty forcing re-build
     - conan install cmake_installer/3.14.3@conan/stable --build cmake_installer
-    - conan install . --build missing -s compiler.libcxx=libstdc++11
-    - conan build . -s compiler.libcxx=libstdc++11
+    - conan install . --build missing
+    - conan build . 
   artifacts:
     paths:
       - appimage-services*.AppImage*
