@@ -8,13 +8,13 @@ add_subdirectory(runtimes)
 set(
     AppImageServicesLauncherSRCS
     LauncherService.cpp
-    DBusInterface.cpp
+    LauncherDBusInterface.cpp
 )
 
-# Generate the xml interface file from DBusInterface.h
+# Generate the xml interface file from LauncherDBusInterface.h
 qt5_generate_dbus_interface(
     # header
-    DBusInterface.h
+    LauncherDBusInterface.h
     # interfacename
     org.appimage.Services.Launcher.xml
     # aditional qdbuscpp2xml options
@@ -27,9 +27,9 @@ qt5_add_dbus_adaptor(
     # xmlfile
     ${CMAKE_CURRENT_BINARY_DIR}/org.appimage.Services.Launcher.xml
     # parentheader
-    DBusInterface.h
+    LauncherDBusInterface.h
     # parentclassname
-    DBusInterface
+    LauncherDBusInterface
 )
 set(CMAKE_AUTOMOC ON)
 

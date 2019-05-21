@@ -10,14 +10,14 @@
 #include "LauncherService.h"
 #include "LauncherDefines.h"
 
-class DBusInterface : public QObject {
+class LauncherDBusInterface : public QObject {
 Q_OBJECT
     Q_CLASSINFO("D-Bus Interface", LAUNCHER_DBUS_INTERFACE_NAME)
 
 public:
-    explicit DBusInterface(QObject* parent = nullptr);
+    explicit LauncherDBusInterface(QObject* parent = nullptr);
 
-    ~DBusInterface() override;
+    ~LauncherDBusInterface() override;
 
 public Q_SLOTS:
     /**

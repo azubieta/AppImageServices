@@ -31,10 +31,14 @@ org.appimage.Services1.Updater
 \- rollback ( String appImagePath )
 
 org.appimage.Services1.Updater.Task
-\- tasks
+\- progressValue
+\- progressTotal
+\- status
+\- statusMessage
 
 org.appimage.Services1.Inspector
-\- inspect ( String appImagePath )
+\- getApplicationInfo ( String appImagePath )
+\- getDeveloperInfo ( String appImagePath )
 \- verifySignature ( String appImagePath )
 
 org.appimamge.Services1.Self

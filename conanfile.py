@@ -9,11 +9,14 @@ class AppImageServices(ConanFile):
     version = "0.1"
     settings = "os", "compiler", "build_type", "arch"
 
-    requires = (("libpng/1.6.36@bincrafters/stable"),
+    requires = (("OpenSSL/1.1.1b@conan/stable"),
+                ("libpng/1.6.36@bincrafters/stable"),
+                ("cairo/1.17.2@bincrafters/stable"),
                 ("glib/2.40.0@appimage-conan-community/stable"),
                 ("qt/5.12.3@appimage-conan-community/stable"),
                 ("xdg-utils-cxx/0.1.1@appimage-conan-community/stable"),
                 ("libappimage/1.0.1@appimage-conan-community/stable"),
+                ("appimageupdate/continuous@appimage-conan-community/stable"),
                 ("squashfuse/0.1.103@appimage-conan-community/stable"))
 
     default_options = {"glib:shared": True, "lzma:shared": True}

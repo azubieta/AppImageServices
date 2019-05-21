@@ -2,11 +2,13 @@
 #include <QCoreApplication>
 
 // local
-#include "launcher/DBusInterface.h"
+#include "LauncherDBusInterface.h"
+#include "UpdaterDBusInterface.h"
 
 int main(int argc, char** argv) {
     QCoreApplication a(argc, argv);
 
-    DBusInterface interface(&a);
+    LauncherDBusInterface launcherDBusInterface(&a);
+    UpdaterDBusInterface updaterDBusInterface(&a);
     return a.exec();
 }
