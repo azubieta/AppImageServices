@@ -26,7 +26,7 @@ LauncherDBusInterface::LauncherDBusInterface(QObject* parent) : QObject(parent) 
 bool LauncherDBusInterface::registerApp(const QString& appImagePath) const {
     qDebug() << __FUNCTION__ << " : " << appImagePath;
     QString newPath = removeUriProtocolFromPath(appImagePath);
-    return launcherService.registerApp(appImagePath.toStdString());
+    return launcherService.registerApp(newPath.toStdString());
 }
 
 bool LauncherDBusInterface::unregisterApp(const QString& appImagePath) const {
