@@ -4,6 +4,7 @@ find_package(PkgConfig)
 add_subdirectory(common)
 add_subdirectory(launcher)
 add_subdirectory(updater)
+add_subdirectory(installer)
 
 find_package(Qt5 CONFIG REQUIRED Core)
 add_executable(appimage-services main.cpp)
@@ -14,3 +15,4 @@ install(
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     COMPONENT AppImageServices
 )
+install(PROGRAMS appimage-services-wrapper.sh DESTINATION ${CMAKE_INSTALL_BINDIR})

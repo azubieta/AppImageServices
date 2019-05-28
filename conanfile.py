@@ -36,7 +36,14 @@ class AppImageServices(ConanFile):
 
         cmake = CMake(self)
         cmake.definitions["CMAKE_PROJECT_AppImageServices_INCLUDE"] = self.build_folder + "/conan_paths.cmake"
-        cmake.definitions["CMAKE_INSTALL_PREFIX"] = appDirPath + "/usr"
+        # Correct conan default installation paths
+        cmake.definitions["CMAKE_INSTALL_PREFIX"] = appDirPath
+        cmake.definitions["CMAKE_INSTALL_BINDIR"] = "usr/bin"
+        cmake.definitions["CMAKE_INSTALL_LIBDIR"] = "usr/lib"
+        cmake.definitions["CMAKE_INSTALL_INCLUDEDIR"] = "usr/include"
+        cmake.definitions["CMAKE_INSTALL_DATAROOTDIR"] = "usr/share"
+        cmake.definitions["CMAKE_INSTALL_SYSCONFDIR"] = "etc"
+
         cmake.configure()
         cmake.build()
         cmake.install()
