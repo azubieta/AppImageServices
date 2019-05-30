@@ -12,7 +12,7 @@ addons:
       - realpath wget git realpath
 
 install:
-  - sudo wget -c https://github.com/appimage-conan-community/conan-appimage/releases/download/continuous/conan-8e5c23a-x86_64.AppImage -O /usr/local/bin/conan
+  - sudo wget -c https://github.com/appimage-conan-community/conan-appimage/releases/download/continuous/conan-x86_64.AppImage -O /usr/local/bin/conan
   - sudo chmod a+x /usr/local/bin/conan
   - conan user
   - conan remote add appimage-conan-community https://api.bintray.com/conan/appimage-conan-community/public-conan --insert=0
