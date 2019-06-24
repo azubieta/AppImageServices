@@ -20,8 +20,11 @@ org.appimage.Services1.Updater.Task
 
 org.appimage.Services1.Inspector
 \- getApplicationInfo ( String appImagePath )
-\- getDeveloperInfo ( String appImagePath )
+\- getDevelopmentInfo ( String appImagePath )
 \- verifySignature ( String appImagePath )
+\- extractIcon ( String appImagePath, String path )
+\- extractFile ( String appImagePath, String sourcePath, String targetPath )
+\- listContents ( String appImagePath)
 
 org.appimamge.Services1.Self
 \- checkUpdates

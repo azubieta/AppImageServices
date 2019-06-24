@@ -1,0 +1,9 @@
+#pragma once
+
+#define INSPECTOR_DBUS_INTERFACE_NAME "org.appimage.Services1.Inspector"
+#define INSPECTOR_DBUS_OBJECT_PATH "/org/appimage/Services1/Inspector"
+#define INSPECTOR_DBUS_METHOD_GET_APPLICATION_INFO INSPECTOR_DBUS_INTERFACE_NAME".getApplicationInfo"
+#define INSPECTOR_DBUS_METHOD_GET_DEVELOPER_INFO INSPECTOR_DBUS_INTERFACE_NAME".getDeveloperInfo"
+
+
+

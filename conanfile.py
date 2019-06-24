@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 
 from conans import ConanFile, CMake, tools
+from shutil import copyfile
+import os
 
 
 class AppImageServices(ConanFile):
@@ -10,16 +12,18 @@ class AppImageServices(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
 
     requires = (("OpenSSL/1.1.1b@conan/stable"),
-                ("libpng/1.6.36@bincrafters/stable"),
-                ("cairo/1.17.2@bincrafters/stable"),
+                ("harfbuzz/2.4.0@appimage-conan-community/stable"),
                 ("glib/2.40.0@appimage-conan-community/stable"),
+                ("libpng/1.6.36@bincrafters/stable"),
+                ("cairo/1.17.2@appimage-conan-community/stable"),
                 ("qt/5.12.3@appimage-conan-community/stable"),
                 ("xdg-utils-cxx/0.1.1@appimage-conan-community/stable"),
-                ("libappimage/1.0.1@appimage-conan-community/stable"),
+                ("freetype/2.9.1@appimage-conan-community/stable"),
+                ("libappimage/1.0.2@local/testing"),
                 ("appimageupdate/continuous@appimage-conan-community/stable"),
                 ("squashfuse/0.1.103@appimage-conan-community/stable"))
 
-    default_options = {"glib:shared": True, "lzma:shared": True}
+    default_options = {"glib:shared": True, "lzma:shared": True, "cairo:shared": True, "freetype:shared": True}
 
     build_requires = ("patchelf_installer/0.9@appimage-conan-community/stable",
                       "gtest/1.8.1@bincrafters/stable",
@@ -31,21 +35,47 @@ class AppImageServices(ConanFile):
 
     generators = "cmake_paths", "pkg_config"
 
+    def import_pkg_config_files(self, pkg, pkgconfig_path):
+        for root, dirs, files in os.walk(self.deps_cpp_info[pkg].rootpath):
+            for file in files:
+                if file.endswith("pc"):
+                    source_path = os.path.join(root, file)
+                    target_path = os.path.join(pkgconfig_path, file)
+                    print("Importing pkg_config file: %s" % target_path)
+                    copyfile(source_path, target_path)
+                    tools.replace_prefix_in_pc_file(target_path, self.deps_cpp_info[pkg].rootpath)
+
+    def configure(self):
+        self.options["squashfuse"].shared = False
+        self.options["libarchive"].shared = False
+        self.options["xdg-utils-cxx"].shared = False
+        self.options["xdg-utils-cxx"].fPIC = True
+        self.options["cairo"].shared = True
+        self.options["pango"].shared = True
+        self.options["librsvg"].shared = True
+        self.options["glib"].shared = True
+        self.options["zlib"].shared = True
+        self.options["qt"].shared = True
+
     def build(self):
         appDirPath = self.build_folder + "/AppDir"
 
-        cmake = CMake(self)
-        cmake.definitions["CMAKE_PROJECT_AppImageServices_INCLUDE"] = self.build_folder + "/conan_paths.cmake"
-        # Correct conan default installation paths
-        cmake.definitions["CMAKE_INSTALL_PREFIX"] = appDirPath
-        cmake.definitions["CMAKE_INSTALL_BINDIR"] = "usr/bin"
-        cmake.definitions["CMAKE_INSTALL_LIBDIR"] = "usr/lib"
-        cmake.definitions["CMAKE_INSTALL_INCLUDEDIR"] = "usr/include"
-        cmake.definitions["CMAKE_INSTALL_DATAROOTDIR"] = "usr/share"
-        cmake.definitions["CMAKE_INSTALL_SYSCONFDIR"] = "etc"
+        for lib in self.deps_cpp_info.deps:
+            self.import_pkg_config_files(lib, self.build_folder)
 
-        cmake.configure()
-        cmake.build()
-        cmake.install()
+        with tools.environment_append({'PKG_CONFIG_PATH': self.build_folder}):
+            cmake = CMake(self)
+            cmake.definitions["CMAKE_PROJECT_AppImageServices_INCLUDE"] = self.build_folder + "/conan_paths.cmake"
+            # Correct conan default installation paths
+            cmake.definitions["CMAKE_INSTALL_PREFIX"] = appDirPath
+            cmake.definitions["CMAKE_INSTALL_BINDIR"] = "usr/bin"
+            cmake.definitions["CMAKE_INSTALL_LIBDIR"] = "usr/lib"
+            cmake.definitions["CMAKE_INSTALL_INCLUDEDIR"] = "usr/include"
+            cmake.definitions["CMAKE_INSTALL_DATAROOTDIR"] = "usr/share"
+            cmake.definitions["CMAKE_INSTALL_SYSCONFDIR"] = "etc"
 
-        self.run("linuxdeploy --appdir=%s --plugin qt --output appimage" % appDirPath, run_environment=True)
+            cmake.configure()
+            cmake.build()
+            cmake.install()
+
+            self.run("linuxdeploy --appdir=%s --plugin qt --output appimage" % appDirPath, run_environment=True)

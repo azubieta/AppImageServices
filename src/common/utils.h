@@ -12,9 +12,4 @@
  * @param uri
  * @return path without the protocol header ('file://')
  */
-QString removeUriProtocolFromPath(const QString& uri) {
-    if (uri.startsWith("file://"))
-        return uri.mid(7);
-    else
-        return uri;
-}
+QString removeUriProtocolFromPath(const QString& uri);

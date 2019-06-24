@@ -63,7 +63,7 @@ target_include_directories(
 
 target_link_libraries(
     AppImageServicesUpdater
-    PUBLIC Qt5::DBus Qt5::Core libappimage AppImageServicesCommon PkgConfig::appimageupdate
+    PUBLIC Qt5::DBus Qt5::Core libappimage PkgConfig::appimageupdate AppImageServicesCommon
 )
 
 # Install D-Bus interface descriptor
