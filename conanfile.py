@@ -19,7 +19,7 @@ class AppImageServices(ConanFile):
                 ("qt/5.12.3@appimage-conan-community/stable"),
                 ("xdg-utils-cxx/0.1.1@appimage-conan-community/stable"),
                 ("freetype/2.9.1@appimage-conan-community/stable"),
-                ("libappimage/1.0.2@local/testing"),
+                ("libappimage/1.0.2@appimage-conan-community/stable"),
                 ("AppImageUpdaterBridge/1.0.4@appimage-conan-community/stable"),
                 ("squashfuse/0.1.103@appimage-conan-community/stable"))
 
