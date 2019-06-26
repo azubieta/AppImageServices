@@ -21,7 +21,7 @@ install:
   - conan install cmake_installer/3.14.3@conan/stable --build cmake_installer
 
 script:
-  - conan install . --build missing -s compiler.libcxx=libstdc++11 -s compiler.cppstd=11
+  - conan install . --build missing --build cairo --build librsvg -s compiler.libcxx=libstdc++11 -s compiler.cppstd=11
   - conan build .
 
 after_success:

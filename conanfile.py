@@ -16,6 +16,7 @@ class AppImageServices(ConanFile):
                 ("glib/2.40.0@appimage-conan-community/stable"),
                 ("libpng/1.6.36@bincrafters/stable"),
                 ("cairo/1.17.2@appimage-conan-community/stable"),
+                ("librsvg/2.40.20@appimage-conan-community/stable"),
                 ("qt/5.12.3@appimage-conan-community/stable"),
                 ("xdg-utils-cxx/0.1.1@appimage-conan-community/stable"),
                 ("freetype/2.9.1@appimage-conan-community/stable"),
@@ -24,18 +25,22 @@ class AppImageServices(ConanFile):
                 ("squashfuse/0.1.103@appimage-conan-community/stable"))
 
     default_options = {
+        "AppImageUpdaterBridge:shared": True,
+        "qt:shared": True,
+        "libappimage:shared": True,
         "squashfuse:shared": False,
         "libarchive:shared": False,
         "xdg-utils-cxx:shared": False,
         "xdg-utils-cxx:fPIC": True,
         "cairo:shared": True,
-        "pango:shared": True,
-        "librsvg:shared": True,
-        "glib:shared": True,
         "lzma:shared": True,
-        "qt:shared": True,
-        "AppImageUpdaterBridge:shared": True
-    }
+        "pango:shared": True,
+        "zlib:shared": True,
+        "librsvg:shared": True,
+        "fontconfig:shared": True,
+        "freetype:shared": False,
+        "glib:shared": True,
+        }
 
     build_requires = ("patchelf_installer/0.9@appimage-conan-community/stable",
                       "gtest/1.8.1@bincrafters/stable",
