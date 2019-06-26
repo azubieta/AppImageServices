@@ -33,7 +33,6 @@ class AppImageServices(ConanFile):
         "librsvg:shared": True,
         "glib:shared": True,
         "lzma:shared": True,
-        "zlib:shared": True,
         "qt:shared": True,
         "AppImageUpdaterBridge:shared": True
     }
