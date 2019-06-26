@@ -8,51 +8,48 @@
 #include "UpdaterService.h"
 
 
-UpdaterService::UpdaterService(QObject* parent) : QObject(parent) {
-    connect(&updatesClock, SIGNAL(timeout()), this, SLOT(updateTasks()));
-}
+UpdaterService::UpdaterService(QObject* parent) : QObject(parent) {}
 
 QString UpdaterService::update(const QString& path) {
-    auto taskPtr = std::make_shared<appimage::update::Updater>(path.toStdString());
-    taskPtr->start();
+    auto task = new UpdaterTaskDBusInterface(path);
+    tasks.insert(task->getId(), task);
 
-    QString taskId = QUuid::createUuid().toString(QUuid::Id128);
-    tasks.insert(taskId, taskPtr);
+    connect(task, &UpdaterTaskDBusInterface::stateChanged, this, &UpdaterService::onTaskStateChanged);
 
-    QMetaObject::invokeMethod(this, &UpdaterService::updateTasks);
-    emit taskStarted(taskId);
-
-    return taskId;
+    return task->getId();
 }
 
 UpdaterService::~UpdaterService() {
     // Stop all tasks
     for (const auto& task: tasks)
-        task->stop();
+        task->cancel();
 }
 
-void UpdaterService::updateTasks() {
-    if (!tasks.empty()) {
-        updatesClock.start(200);
 
-        qDebug() << "Tasks progress: ";
-        QStringList tasksToRemove;
-        for (QMap<QString, std::shared_ptr<appimage::update::Updater>>::iterator itr = tasks.begin();
-             itr != tasks.end(); ++itr) {
-            if (itr.value()->isDone())
-                tasksToRemove << itr.key();
+void UpdaterService::onTaskStateChanged(int state) {
+    UpdaterTaskDBusInterface* task = dynamic_cast<UpdaterTaskDBusInterface*>(sender());
+
+    if (task != nullptr) {
+        if (state == UpdaterTaskDBusInterface::Running)
+            emit taskStarted(task->getId());
+
+        if (state == UpdaterTaskDBusInterface::Finished) {
+            emit taskFinished(task->getId(), true);
+
+
+            tasks.remove(task->getId());
+            task->deleteLater();
         }
 
 
-        for (const auto& taskId: tasksToRemove) {
-            auto task = tasks[taskId];
-            emit taskFinished(taskId, task->state() == appimage::update::Updater::SUCCESS);
-            tasks.remove(taskId);
+        if (state == UpdaterTaskDBusInterface::Canceled || state == UpdaterTaskDBusInterface::Faulty) {
+            emit taskFinished(task->getId(), false);
+
+            tasks.remove(task->getId());
+            task->deleteLater();
         }
-    } else
-        updatesClock.stop();
+    }
 }
 
-std::shared_ptr<appimage::update::Updater> UpdaterService::getTask(const QString& taskId) {
-    return tasks.value(taskId, std::shared_ptr<appimage::update::Updater>());
+void UpdaterService::check(const QString& path) {
 }

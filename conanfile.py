@@ -20,10 +20,24 @@ class AppImageServices(ConanFile):
                 ("xdg-utils-cxx/0.1.1@appimage-conan-community/stable"),
                 ("freetype/2.9.1@appimage-conan-community/stable"),
                 ("libappimage/1.0.2@local/testing"),
-                ("appimageupdate/continuous@appimage-conan-community/stable"),
+                ("AppImageUpdaterBridge/1.0.4@appimage-conan-community/stable"),
                 ("squashfuse/0.1.103@appimage-conan-community/stable"))
 
-    default_options = {"glib:shared": True, "lzma:shared": True, "cairo:shared": True, "freetype:shared": True}
+    default_options = {
+        "squashfuse:shared": False,
+        "libarchive:shared": False,
+        "xdg-utils-cxx:shared": False,
+        "xdg-utils-cxx:fPIC": True,
+        "cairo:shared": True,
+        "pango:shared": True,
+        "librsvg:shared": True,
+        "freetype:shared": True,
+        "glib:shared": True,
+        "lzma:shared": True,
+        "zlib:shared": True,
+        "qt:shared": True,
+        "AppImageUpdaterBridge:shared": True,
+        "freetype:shared": True}
 
     build_requires = ("patchelf_installer/0.9@appimage-conan-community/stable",
                       "gtest/1.8.1@bincrafters/stable",
@@ -33,7 +47,7 @@ class AppImageServices(ConanFile):
                       "linuxdeploy-plugin-qt/continuous@appimage-conan-community/stable",
                       "linuxdeploy-plugin-appimage/continuous@appimage-conan-community/stable")
 
-    generators = "cmake_paths", "pkg_config"
+    generators = "cmake", "cmake_paths", "pkg_config"
 
     def import_pkg_config_files(self, pkg, pkgconfig_path):
         for root, dirs, files in os.walk(self.deps_cpp_info[pkg].rootpath):
@@ -44,18 +58,6 @@ class AppImageServices(ConanFile):
                     print("Importing pkg_config file: %s" % target_path)
                     copyfile(source_path, target_path)
                     tools.replace_prefix_in_pc_file(target_path, self.deps_cpp_info[pkg].rootpath)
-
-    def configure(self):
-        self.options["squashfuse"].shared = False
-        self.options["libarchive"].shared = False
-        self.options["xdg-utils-cxx"].shared = False
-        self.options["xdg-utils-cxx"].fPIC = True
-        self.options["cairo"].shared = True
-        self.options["pango"].shared = True
-        self.options["librsvg"].shared = True
-        self.options["glib"].shared = True
-        self.options["zlib"].shared = True
-        self.options["qt"].shared = True
 
     def build(self):
         appDirPath = self.build_folder + "/AppDir"

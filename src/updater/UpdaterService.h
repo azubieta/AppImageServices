@@ -5,7 +5,8 @@
 // libraries
 #include <QMap>
 #include <QTimer>
-#include <appimage/update.h>
+#include <AppImageUpdaterBridge>
+#include "UpdaterTaskDBusInterface.h"
 
 class UpdaterService : public QObject {
 Q_OBJECT
@@ -13,11 +14,13 @@ Q_OBJECT
 public:
     explicit UpdaterService(QObject* parent = nullptr);
 
+    ~UpdaterService() override;
+
+public slots:
+
     QString update(const QString& path);
 
-    std::shared_ptr<appimage::update::Updater> getTask(const QString& taskId);
-
-    ~UpdaterService() override;
+    void check(const QString& path);
 
 signals:
 
@@ -27,9 +30,9 @@ signals:
 
 protected slots:
 
-    void updateTasks();
+    void onTaskStateChanged(int state);
 
 private:
-    QMap<QString, std::shared_ptr<appimage::update::Updater>> tasks;
-    QTimer updatesClock;
+
+    QMap<QString, UpdaterTaskDBusInterface*> tasks;
 };

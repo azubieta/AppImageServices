@@ -1,6 +1,5 @@
 find_package(libappimage REQUIRED)
-find_package(Qt5 CONFIG REQUIRED Core DBus)
-pkg_search_module(appimageupdate REQUIRED IMPORTED_TARGET appimageupdate)
+find_package(Qt5 CONFIG REQUIRED Core DBus Network)
 
 set(
     AppImageServicesUpdaterSRCS
@@ -63,7 +62,7 @@ target_include_directories(
 
 target_link_libraries(
     AppImageServicesUpdater
-    PUBLIC Qt5::DBus Qt5::Core libappimage PkgConfig::appimageupdate AppImageServicesCommon
+    PUBLIC Qt5::Core Qt5::DBus Qt5::Network libappimage CONAN_PKG::AppImageUpdaterBridge AppImageServicesCommon
 )
 
 # Install D-Bus interface descriptor

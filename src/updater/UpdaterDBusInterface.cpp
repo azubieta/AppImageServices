@@ -40,14 +40,9 @@ QString UpdaterDBusInterface::update(const QString& appImagePath) {
 
 void UpdaterDBusInterface::onTaskStarted(const QString& taskId) {
     qDebug() << "Started: " << taskId;
-    std::shared_ptr<appimage::update::Updater> task = updaterService.getTask(taskId);
-    if (task) {
-        // Publish Task object
-        new UpdaterTaskDBusInterface(taskId, task, this);
 
-        // Forward signal
-        emit taskStarted(taskId);
-    }
+    // Forward signal
+    emit taskStarted(taskId);
 }
 
 void UpdaterDBusInterface::onTaskFinished(const QString& taskId, bool result) {

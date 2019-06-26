@@ -3,7 +3,7 @@
 find_package(PkgConfig)
 add_subdirectory(common)
 add_subdirectory(launcher)
-#add_subdirectory(updater)
+add_subdirectory(updater)
 add_subdirectory(inspector)
 add_subdirectory(installer)
 
@@ -14,7 +14,7 @@ target_link_libraries(
     appimage-services
     PRIVATE freetype
     PRIVATE AppImageServicesLauncher
-#    PRIVATE AppImageServicesUpdater
+    PRIVATE AppImageServicesUpdater
     PRIVATE AppImageServicesInspector
     PRIVATE Qt5::Core
 )

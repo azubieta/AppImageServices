@@ -5,7 +5,7 @@
 // libraries
 #include <QTimer>
 #include <QObject>
-#include <appimage/update.h>
+#include <AppImageUpdaterBridge>
 
 // local
 #include "UpdaterDefines.h"
@@ -20,8 +20,19 @@ Q_PROPERTY(int progressTotal READ getProgressTotal NOTIFY progressTotalChanged)
 Q_PROPERTY(QString statusMessage READ getStatusMessage NOTIFY statusMessageChanged)
 
 public:
-    UpdaterTaskDBusInterface(const QString& id, std::shared_ptr<appimage::update::Updater> updater, QObject* parent);
+    enum State {
+        Ready = 0,
+        Running,
+        Finished,
+        Canceled,
+        Faulty,
+    };
 
+    explicit UpdaterTaskDBusInterface(const QString& appImagePath, QObject* parent = nullptr);
+
+    ~UpdaterTaskDBusInterface() override;
+
+public:
     const QString& getId() const;
 
     int getProgressValue();
@@ -32,7 +43,9 @@ public:
 
     QString getStatusMessage();
 
-    ~UpdaterTaskDBusInterface() override;
+public slots:
+
+    void cancel();
 
 Q_SIGNALS:
 
@@ -45,7 +58,18 @@ Q_SIGNALS:
     void progressTotalChanged(int value, int total);
 
 protected slots:
-    void updateTaskData();
+
+    void onStarted();
+
+    void onCanceled();
+
+    void onFinished(QJsonObject, QString);
+
+    void onStatusChanged(short);
+
+    void onError(short);
+
+    void onProgress(int, qint64, qint64, double, const QString&);
 
 private:
     QString id;
@@ -53,9 +77,15 @@ private:
     int state;
     QString statusMessage;
 
-    int progressValue{};
-    int progressTotal{};
+    int progressValue;
+    int progressTotal;
 
-    QTimer updateTimer;
-    std::shared_ptr<appimage::update::Updater> updater;
+    AppImageUpdaterBridge::AppImageDeltaRevisioner deltaRevisioner;
+
+private:
+    void publish();
+
+    void setState(State newState);
+
+    void connectSignals() const;
 };

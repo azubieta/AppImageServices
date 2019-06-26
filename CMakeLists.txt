@@ -18,6 +18,9 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 
 include(GNUInstallDirs)
 
+include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+conan_basic_setup(TARGETS)
+
 add_subdirectory(src)
 add_subdirectory(res)
 add_subdirectory(tests)
