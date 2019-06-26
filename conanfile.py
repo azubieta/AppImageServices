@@ -31,13 +31,12 @@ class AppImageServices(ConanFile):
         "cairo:shared": True,
         "pango:shared": True,
         "librsvg:shared": True,
-        "freetype:shared": True,
         "glib:shared": True,
         "lzma:shared": True,
         "zlib:shared": True,
         "qt:shared": True,
-        "AppImageUpdaterBridge:shared": True,
-        "freetype:shared": True}
+        "AppImageUpdaterBridge:shared": True
+    }
 
     build_requires = ("patchelf_installer/0.9@appimage-conan-community/stable",
                       "gtest/1.8.1@bincrafters/stable",
