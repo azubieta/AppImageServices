@@ -51,5 +51,11 @@ void UpdaterService::onTaskStateChanged(int state) {
     }
 }
 
-void UpdaterService::check(const QString& path) {
+QString UpdaterService::check(const QString& path) {
+    auto task = new UpdaterTaskDBusInterface(path, true);
+    tasks.insert(task->getId(), task);
+
+    connect(task, &UpdaterTaskDBusInterface::stateChanged, this, &UpdaterService::onTaskStateChanged);
+
+    return task->getId();
 }

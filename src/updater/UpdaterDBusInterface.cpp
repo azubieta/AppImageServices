@@ -51,3 +51,9 @@ void UpdaterDBusInterface::onTaskFinished(const QString& taskId, bool result) {
     // Forward signal
     emit taskFinished(taskId, result);
 }
+
+QString UpdaterDBusInterface::check(const QString& appImagePath) {
+    const QString path = removeUriProtocolFromPath(appImagePath);
+
+    return updaterService.check(path);
+}

@@ -25,6 +25,13 @@ public slots:
      */
     QString update(const QString& appImagePath);
 
+    /**
+     * Will check for updates for the AppImage pointed by <appImagePath>.
+     * @param appImagePath
+     * @return taskId or an empty string in case of error
+     */
+    QString check(const QString& appImagePath);
+
 protected slots:
 
     void onTaskStarted(const QString& taskId);

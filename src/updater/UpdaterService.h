@@ -20,7 +20,7 @@ public slots:
 
     QString update(const QString& path);
 
-    void check(const QString& path);
+    QString check(const QString& path);
 
 signals:
 

@@ -28,7 +28,7 @@ public:
         Faulty,
     };
 
-    explicit UpdaterTaskDBusInterface(const QString& appImagePath, QObject* parent = nullptr);
+    explicit UpdaterTaskDBusInterface(const QString& appImagePath, bool onlyCheck = false, QObject* parent = nullptr);
 
     ~UpdaterTaskDBusInterface() override;
 
@@ -70,6 +70,8 @@ protected slots:
     void onError(short);
 
     void onProgress(int, qint64, qint64, double, const QString&);
+
+    void onUpdateAvailable(bool, QJsonObject);
 
 private:
     QString id;
