@@ -35,6 +35,12 @@ bool LauncherDBusInterface::unregisterApp(const QString& appImagePath) const {
     return launcherService.unregisterApp(newPath.toStdString());
 }
 
+bool LauncherDBusInterface::isRegistered(const QString& appImagePath) const {
+    qDebug() << __FUNCTION__ << " : " << appImagePath;
+    QString newPath = removeUriProtocolFromPath(appImagePath);
+    return launcherService.isRegistered(newPath.toStdString());
+}
+
 bool LauncherDBusInterface::launch(const QString& appImagePath, const QStringList& args) const {
     qDebug() << __FUNCTION__ << " : " << appImagePath;
     QString newPath = removeUriProtocolFromPath(appImagePath);

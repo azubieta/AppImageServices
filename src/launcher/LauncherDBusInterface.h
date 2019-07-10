@@ -42,6 +42,13 @@ public Q_SLOTS:
      */
     bool unregisterApp(const QString& appImagePath) const;
 
+    /**
+     * Checks whether an application has been registered or not in the system
+     * @param appImagePath
+     * @return true if it's registered, false otherwise
+     */
+    bool isRegistered(const QString& appImagePath) const;
+
 private:
     /*
      * Remove the Uri Protocol 'file://' from <path> if exists

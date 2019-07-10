@@ -36,6 +36,16 @@ bool LauncherService::unregisterApp(const std::string& appImagePath) const {
     return false;
 }
 
+bool LauncherService::isRegistered(const std::string& appImagePath) const {
+    try {
+        return integrationManager.isARegisteredAppImage(appImagePath);
+    } catch (const appimage::core::AppImageError& ex) {
+        std::cerr << "Unable to check if " << appImagePath << " is registered in the system: " << ex.what()
+                  << std::endl;
+    }
+    return false;
+}
+
 void LauncherService::registerAppAddRemoveDesktopEntryAction(const std::string& appImagePath) const {
     using namespace XdgUtils::DesktopEntry;
 
