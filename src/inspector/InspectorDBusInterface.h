@@ -35,5 +35,13 @@ public Q_SLOTS:
      */
     QStringList listContents(const QString& appImagePath);
 
+    /**
+     * Extract a file from <path> to the <target>
+     * @param appImagePath
+     * @param source relative path to the file inside the AppImage
+     * @param target path were the file will be extracted
+     * @return
+     */
+    bool extractFile(QString appImagePath, QString source, QString target);
 };
 

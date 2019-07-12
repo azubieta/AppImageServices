@@ -1,5 +1,6 @@
 // libraries
 #include <appimage/appimage++.h>
+#include <appimage/utils/ResourcesExtractor.h>
 
 // local
 #include "utils.h"
@@ -51,6 +52,21 @@ QString InspectorDBusInterface::getApplicationInfo(QString appImagePath) {
     } catch (std::runtime_error error) {
         std::cerr << "Error: " << error.what() << std::endl;
         return "{\"error\":\"" + QString::fromStdString(error.what()) + "\"}";
+    }
+}
+
+bool InspectorDBusInterface::extractFile(QString appImagePath, QString source, QString target) {
+    try {
+        QString path = removeUriProtocolFromPath(appImagePath);
+        appimage::core::AppImage appImage(path.toStdString());
+        appimage::utils::ResourcesExtractor extractor(appImage);
+
+        std::map<std::string, std::string> extractArgs = {{source.toStdString(), target.toStdString()}};
+        extractor.extractTo(extractArgs);
+        return true;
+    } catch (const std::runtime_error& error) {
+        qWarning() << "Unable to extract AppImage file " << source << " to " << target << " error: " << error.what();
+        return false;
     }
 }
 
