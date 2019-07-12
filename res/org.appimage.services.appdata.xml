@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">​
+    <id>org.appimage.services</id>
+    <metadata_license>FSFAP</metadata_license>
+    <project_license>MIT</project_license>
+    <name>AppImage Services</name>
+    <summary>AppImage desktop integration services</summary>
+    <description>
+        <p>
+            Collection of DBus services to extend the AppImage experience in desktop environments.
+
+            Includes:
+
+            Launcher: Provides system launcher integration of AppImages
+            Updater: Provides a way of updating AppImages
+            Inspector: Allows to extract the application metadata from AppImage files
+        </p>
+    </description>
+    ​
+    <url type="homepage">https://github.com/azubieta/AppImageService</url>
+    <project_group>AppImage</project_group>
+    <releases>
+        <release version="0.2.0" date="2019-06-14">
+        </release>
+    </releases>
+    <provides>
+        <binary>appimage-services</binary>
+        <dbus type="system">org.appimage.Services1.Launcher</dbus>
+        <dbus type="system">org.appimage.Services1.Updater</dbus>
+        <dbus type="system">org.appimage.Services1.Inspector</dbus>
+    </provides>
+</component>

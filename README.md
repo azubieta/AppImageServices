@@ -1,5 +1,5 @@
 # AppImageServices
-Language agnostic implementation of the AppImage user experience (not mandatory to use AppImages)
+D-Bus API over the AppImage related libraries.
 
 This is meant to be used by file managers, software centers or other tools that aims to provide a consistent user 
 experience to AppImage users. A language agnostic API (DBus) is provided to enhance compatibility with all kind of 
@@ -7,80 +7,41 @@ solutions.
 
 
 The following features will be provided:
-- launching
-- verification
-- registration (menu entries creation including icons and mime-types associations)
-- un-registration
-- update checking and notification
-- performing the update
-- metadata extraction
+- AppImage launching
+- AppImage verification
+- AppImage registration (menu entries creation including icons and mime-types associations)
+- AppImage un-registration
+- AppImage update checking and notification
+- AppImage performing the update
+- AppImage metadata extraction
+
+For more details about the API see the `README-API.md` file.
+
 
 _This service must be considered an enhancement to the AppImage UX but not a mandatory requirement to use AppImages._
 
-## D-Bus Interface
-```
-org.appimage.Services1.Launcher
-\- launch ( String appImagePath )
-\- register ( String appImagePath )
-\- unregister ( String appImagePath )
-\- listRegisteredApplications
+## Build
 
-org.appimage.Services1.Updater
-\- checkUpdates ( String appImagePath )
-\- update ( String appImagePath )
-\- rollback ( String appImagePath )
-
-org.appimage.Services1.Updater.Task
-\- tasks
-
-org.appimage.Services1.Inspector
-\- inspect ( String appImagePath )
-\- verifySignature ( String appImagePath )
-
-org.appimamge.Services1.Self
-\- checkUpdates
-\- update
-\- rollback
-
+This project is configured to be built using [**conan**](https://conan.io) 
+to install it run: 
+```bash=
+pip install conan
 ```
 
-## Command Line Interface
+Add dependencies repositories:
+```bash=
+conan remote add appimage-conan-community https://api.bintray.com/conan/appimage-conan-community/public-conan --insert=0
+conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan --insert=1
 ```
-cmd=appimage-services
-appimage_path=$HOME/RandomApp.AppImage
-appimage_id=org.appmakers.CoolApp
+Then build the project using the following commands
 
-# Launcher
-$cmd launch $appimage_path
-$cmd launch $appimage_id # ?
+```bash=
+# on the project root dir
+mkdir build && cd build
+# install dependencies (may take a while if there are no 
+binaries for your system)
+conan install .. --build missing
 
-$cmd register $appimage_path
-$cmd unregister $appimage_path
-
-# Directories monitoring
-$cmd add-applications-dir $HOME/Applications
-$cmd remove-applications-dir $HOME/Applications
-
-# Updates 
-$cmd check-updates $appimage_path
-$cmd update $appimage_path
-$cmd rollback $appimage_path
-
-# Inspection
-$cmd inspect $appimage_path # shows appimage contents and metadata
-$cmd verify-signature $appimage_path # verify checksums
-
-# Thumbnailer
-$cmd create-thumbnail $appimage_path
-$cmd remove-thumbnail $appimage_path
-
-# Self Management
-$cmd # starts as a service (deamon)
-./appimage-services.AppImage # starts as a service (deamon)
-
-./appimage-services.AppImage self-install --move-to-opt
-./appimage-services.AppImage self-uninstall
-./appimage-services.AppImage self-update
-./appimage-services.AppImage self-rollback
-```
-
+# build the project
+conan build ..
+``` 
