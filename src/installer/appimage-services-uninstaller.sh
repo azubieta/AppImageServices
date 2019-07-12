@@ -11,3 +11,5 @@ echo "Uninstalling $BINDIR/appimage-services.AppImage"
 rm $AUTOSTART_DIR/org.appimage.services.desktop
 rm $BINDIR/appimage-services.AppImage
 
+rm "$TYPE1_LAUNCHER_DESKTOP_ENTRY_TARGET_PATH"
+rm "$TYPE2_LAUNCHER_DESKTOP_ENTRY_TARGET_PATH"
