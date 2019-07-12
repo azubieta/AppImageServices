@@ -5,6 +5,7 @@ add_subdirectory(common)
 add_subdirectory(launcher)
 add_subdirectory(updater)
 add_subdirectory(inspector)
+add_subdirectory(thumbnailer)
 add_subdirectory(installer)
 
 find_package(freetype REQUIRED)
@@ -16,6 +17,7 @@ target_link_libraries(
     PRIVATE AppImageServicesLauncher
     PRIVATE AppImageServicesUpdater
     PRIVATE AppImageServicesInspector
+    PRIVATE AppImageServicesThumbnailer
     PRIVATE Qt5::Core
 )
 

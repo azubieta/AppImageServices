@@ -1,0 +1,6 @@
+#pragma once
+
+#define THUMBNAILER_DBUS_INTERFACE_NAME "org.appimage.Services1.Thumbnailer"
+#define THUMBNAILER_DBUS_OBJECT_PATH "/org/appimage/Services1/Thumbnailer"
+#define THUMBNAILER_DBUS_METHOD_CREATE THUMBNAILER_DBUS_INTERFACE_NAME".create"
+#define THUMBNAILER_DBUS_METHOD_DESTROY THUMBNAILER_DBUS_INTERFACE_NAME".destroy"
