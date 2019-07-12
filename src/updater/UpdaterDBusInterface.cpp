@@ -25,9 +25,6 @@ UpdaterDBusInterface::UpdaterDBusInterface(QObject* parent) : QObject(parent) {
     operationSucceed = dbus.registerService(UPDATER_TASK_DBUS_INTERFACE_NAME);
     if (!operationSucceed)
         qCritical() << "Unable to register d-bus service: " << UPDATER_TASK_DBUS_INTERFACE_NAME;
-
-    connect(&updaterService, &UpdaterService::taskStarted, this, &UpdaterDBusInterface::onTaskStarted);
-    connect(&updaterService, &UpdaterService::taskFinished, this, &UpdaterDBusInterface::onTaskFinished);
 }
 
 UpdaterDBusInterface::~UpdaterDBusInterface() = default;
@@ -36,20 +33,6 @@ QString UpdaterDBusInterface::update(const QString& appImagePath) {
     const QString path = removeUriProtocolFromPath(appImagePath);
 
     return updaterService.update(path);
-}
-
-void UpdaterDBusInterface::onTaskStarted(const QString& taskId) {
-    qDebug() << "Started: " << taskId;
-
-    // Forward signal
-    emit taskStarted(taskId);
-}
-
-void UpdaterDBusInterface::onTaskFinished(const QString& taskId, bool result) {
-    qDebug() << "Finished: " << taskId << " result: " << result;
-
-    // Forward signal
-    emit taskFinished(taskId, result);
 }
 
 QString UpdaterDBusInterface::check(const QString& appImagePath) {

@@ -22,16 +22,6 @@ public slots:
 
     QString check(const QString& path);
 
-signals:
-
-    void taskStarted(QString taskId);
-
-    void taskFinished(QString taskId, bool result);
-
-protected slots:
-
-    void onTaskStateChanged(int state);
-
 private:
 
     QMap<QString, UpdaterTaskDBusInterface*> tasks;
