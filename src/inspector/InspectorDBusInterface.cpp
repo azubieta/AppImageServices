@@ -22,7 +22,18 @@ InspectorDBusInterface::InspectorDBusInterface(QObject* parent) : QObject(parent
 }
 
 QStringList InspectorDBusInterface::listContents(const QString& appImagePath) {
-    return QStringList();
+    QStringList files;
+    try {
+        QString path = removeUriProtocolFromPath(appImagePath);
+        appimage::core::AppImage appImage(path.toStdString());
+        for (const auto& entry: appImage.files())
+            files << QString::fromStdString(entry);
+
+    } catch (const appimage::core::AppImageError& error) {
+        qWarning() << "Unable to list AppImage contents: " << appImagePath;
+    }
+
+    return files;
 }
 
 QString InspectorDBusInterface::getApplicationInfo(QString appImagePath) {

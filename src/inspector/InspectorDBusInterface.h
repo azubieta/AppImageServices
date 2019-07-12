@@ -28,6 +28,11 @@ public Q_SLOTS:
      */
     QString getApplicationInfo(QString appImagePath);
 
+    /**
+     * List files included in the AppImage.
+     * @param appImagePath
+     * @return
+     */
     QStringList listContents(const QString& appImagePath);
 
 };
