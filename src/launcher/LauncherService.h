@@ -20,5 +20,7 @@ private:
 
 private:
     void registerAppAddRemoveDesktopEntryAction(const std::string& appImagePath) const;
+
+    void registerAppAddUpdateDesktopEntryAction(const std::string& appImagePath) const;
 };
 

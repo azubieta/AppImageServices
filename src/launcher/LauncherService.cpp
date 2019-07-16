@@ -9,16 +9,19 @@
 #include <appimage/appimage.h>
 #include <XdgUtils/DesktopEntry/DesktopEntry.h>
 #include <XdgUtils/DesktopEntry/DesktopEntryStringsValue.h>
+#include <QSettings>
 
 // local
 #include "LauncherService.h"
 #include "LauncherDefines.h"
+#include "../updater/UpdaterDefines.h"
 
 bool LauncherService::registerApp(const std::string& appImagePath) const {
     try {
         appimage::core::AppImage appImage(appImagePath);
         integrationManager.registerAppImage(appImage);
         registerAppAddRemoveDesktopEntryAction(appImagePath);
+        registerAppAddUpdateDesktopEntryAction(appImagePath);
         return true;
     } catch (const appimage::core::AppImageError& ex) {
         std::cerr << "Unable to register: " << appImagePath << " : " << ex.what() << std::endl;
@@ -51,6 +54,7 @@ void LauncherService::registerAppAddRemoveDesktopEntryAction(const std::string& 
 
     char* desktopFilePath = appimage_registered_desktop_file_path(appImagePath.c_str(), nullptr, false);
     if (desktopFilePath != nullptr) {
+        QSettings settings;
         std::ifstream ifstream(desktopFilePath);
         DesktopEntry entry(ifstream);
 
@@ -65,14 +69,70 @@ void LauncherService::registerAppAddRemoveDesktopEntryAction(const std::string& 
         entry.set("Desktop Action Remove/Icon", "application-x-trash");
 
         // Build Remove Action Exec Value
-        auto removeCommand = QString("dbus-send --type=method_call --dest=%1 %2 %3 string:'%4'")
-            .arg(LAUNCHER_DBUS_INTERFACE_NAME)
-            .arg(LAUNCHER_DBUS_OBJECT_PATH)
-            .arg(LAUNCHER_DBUS_METHOD_UNREGISTER_APP)
-            .arg(QString::fromStdString(appImagePath));
+        QString removeCommand = settings.value("Launcher/RemoveCommand", "").toString();
+        QString removeCommandArgs = settings.value("Launcher/RemoveCommandArgs", "").toString();
 
-        entry.set("Desktop Action Remove/Exec", removeCommand.toStdString());
-        entry.set("Desktop Action Remove/TryExec", "dbus-send");
+        // Use direct dbus calls as fallback method
+        if (removeCommand.isEmpty()) {
+            removeCommand = "dbus-send";
+            removeCommandArgs = QString("--type=method_call --dest=%1 %2 %3 string:'%4'")
+                .arg(LAUNCHER_DBUS_INTERFACE_NAME)
+                .arg(LAUNCHER_DBUS_OBJECT_PATH)
+                .arg(LAUNCHER_DBUS_METHOD_UNREGISTER_APP)
+                .arg(QString::fromStdString(appImagePath));
+        } else {
+            // replace appimage path argument
+            removeCommandArgs = removeCommandArgs.arg(QString::fromStdString(appImagePath));
+        }
+
+
+        entry.set("Desktop Action Remove/Exec", (removeCommand + " " + removeCommandArgs).toStdString());
+        entry.set("Desktop Action Remove/TryExec", removeCommand.toStdString());
+
+        std::ofstream ofstream(desktopFilePath);
+        ofstream << entry;
+    }
+}
+
+void LauncherService::registerAppAddUpdateDesktopEntryAction(const std::string& appImagePath) const {
+    using namespace XdgUtils::DesktopEntry;
+
+    char* desktopFilePath = appimage_registered_desktop_file_path(appImagePath.c_str(), nullptr, false);
+    if (desktopFilePath != nullptr) {
+        QSettings settings;
+        std::ifstream ifstream(desktopFilePath);
+        DesktopEntry entry(ifstream);
+
+        std::string actionsString = static_cast<std::string>(entry["Desktop Entry/Actions"]);
+        DesktopEntryStringsValue actions(actionsString);
+
+        // Add Update action
+        actions.append("Update");
+        entry.set("Desktop Entry/Actions", actions.dump());
+
+        entry.set("Desktop Action Update/Name", "Update");
+        entry.set("Desktop Action Update/Icon", "update-none");
+
+        // Read custom commands
+        QString updateCommand = settings.value("Launcher/UpdateCommand", "").toString();
+        QString updateCommandArgs = settings.value("Launcher/UpdateCommandArgs", "").toString();
+
+        // Use direct dbus calls as fallback method
+        if (updateCommand.isEmpty()) {
+            updateCommand = "dbus-send";
+            updateCommandArgs = QString("--type=method_call --dest=%1 %2 %3 string:'%4'")
+                .arg(UPDATER_DBUS_INTERFACE_NAME)
+                .arg(UPDATER_TASK_DBUS_OBJECT_PATH)
+                .arg(UPDATER_DBUS_METHOD_UPDATE)
+                .arg(QString::fromStdString(appImagePath));
+        } else {
+            // replace appimage path argument
+            updateCommandArgs = updateCommandArgs.arg(QString::fromStdString(appImagePath));
+        }
+
+
+        entry.set("Desktop Action Update/Exec", (updateCommand + " " + updateCommandArgs).toStdString());
+        entry.set("Desktop Action Update/TryExec", updateCommand.toStdString());
 
         std::ofstream ofstream(desktopFilePath);
         ofstream << entry;
