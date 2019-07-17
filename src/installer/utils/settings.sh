@@ -7,7 +7,7 @@ if [ "$EUID" -ne 0 ]; then
     CONFIG_DIR=$HOME/.config
     AUTOSTART_DIR=$CONFIG_DIR/autostart
     DATA_DIR=$HOME/.local/share
-    SYSTEMD_USER_DIR=$DATA_DIR/systemd/user
+    SYSTEMD_USER_DIR=$CONFIG_DIR/systemd/user
     DBUS_SYSTEM_SERVICES_DIR=$DATA_DIR/dbus-1/services
 else
     # Root installation
@@ -16,7 +16,7 @@ else
     CONFIG_DIR=/etc
     AUTOSTART_DIR=$CONFIG_DIR/xdg/autostart
     DATA_DIR=/usr/share
-    SYSTEMD_USER_DIR=$DATA_DIR/systemd/user
+    SYSTEMD_USER_DIR=$CONFIG_DIR/systemd/user
     DBUS_SYSTEM_SERVICES_DIR=$DATA_DIR/dbus-1/services
 fi
 
