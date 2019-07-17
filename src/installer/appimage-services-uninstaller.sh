@@ -5,11 +5,12 @@ SCRIPTS_DIR=`dirname "$0"`
 source ${SCRIPTS_DIR}/utils/debug-header.sh
 source ${SCRIPTS_DIR}/utils/settings.sh
 
-echo "Uninstalling $BINDIR/appimage-services.AppImage"
+echo "Uninstalling AppImage Services"
+
+# Stop systemd daemon
+systemctl --user $SYSTEMD_EXTRA_ARGS stop appimage-services
+systemctl --user $SYSTEMD_EXTRA_ARGS disable appimage-services
 
 # Uninstall files
-rm $AUTOSTART_DIR/org.appimage.services.desktop
-rm $BINDIR/appimage-services.AppImage
-
-rm "$TYPE1_LAUNCHER_DESKTOP_ENTRY_TARGET_PATH"
-rm "$TYPE2_LAUNCHER_DESKTOP_ENTRY_TARGET_PATH"
+rm $SYSTEMD_USER_DIR/appimage-services.service
+rm $BINDIR/appimage-services

@@ -5,26 +5,28 @@ SCRIPTS_DIR=`dirname "$0"`
 source ${SCRIPTS_DIR}/utils/debug-header.sh
 source ${SCRIPTS_DIR}/utils/settings.sh
 
-echo "Installing $APPIMAGE"
-
-# Create installation directories
+echo "Intalling binary to $BINDIR/appimage-services"
 mkdir -p $BINDIR
+cp --force $APPIMAGE $BINDIR/appimage-services
+
+echo "Installing systemd service to $SYSTEMD_USER_DIR/appimage-services.service"
 mkdir -p $SYSTEMD_USER_DIR
+cat > "$SYSTEMD_USER_DIR/appimage-services.service" <<EOF
+[Unit]
+Description=AppImage Services
 
-# Install files
-cp --verbose --force $APPIMAGE $BINDIR/appimage-services.AppImage
+[Service]
+ExecStart=$BINDIR/appimage-services
+Restart=on-failure
+RestartSec=10
 
-cp --verbose --force \
-    $APPDIR/usr/share/applications/org.appimage.services.desktop \
-    $AUTOSTART_DIR/org.appimage.services.desktop
+[Install]
+WantedBy=default.target
+EOF
 
-sed -i "s|\Exec=.*|Exec=$BINDIR/appimage-services.AppImage|" $AUTOSTART_DIR/org.appimage.services.desktop
-sed -i "s|\TryExec=.*|TryExec=$BINDIR/appimage-services.AppImage|" $AUTOSTART_DIR/org.appimage.services.desktop
-
-echo ""
-echo "To start the service reboot your system or run:"
-echo ""
-echo "$BINDIR/appimage-services.AppImage &"
+systemctl --user $SYSTEMD_EXTRA_ARGS daemon-reload
+systemctl --user $SYSTEMD_EXTRA_ARGS enable appimage-services
+systemctl --user $SYSTEMD_EXTRA_ARGS restart appimage-services
 
 if [ ! $KEEP_INSTALLER ]; then
     rm --verbose $APPIMAGE
