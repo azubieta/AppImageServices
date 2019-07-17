@@ -2,6 +2,7 @@
 #include <QCoreApplication>
 
 #include <appimage/appimage++.h>
+#include <QtCore/QSettings>
 
 // local
 #include "LauncherDBusInterface.h"
@@ -10,12 +11,15 @@
 #include "ThumbnailerDBusInterface.h"
 
 int main(int argc, char** argv) {
-    QCoreApplication a(argc, argv);
+    QCoreApplication app(argc, argv);
+    QCoreApplication::setApplicationName("AppImage Services");
+    QCoreApplication::setOrganizationDomain("org.appimage");
+    QCoreApplication::setOrganizationName("The AppImage Project");
 
-    InspectorDBusInterface inspectorDBusInterface(&a);
-    LauncherDBusInterface launcherDBusInterface(&a);
-    UpdaterDBusInterface updaterDBusInterface(&a);
-    ThumbnailerDBusInterface thumbnailerDBusInterface(&a);
-    
-    return a.exec();
+    InspectorDBusInterface inspectorDBusInterface(&app);
+    LauncherDBusInterface launcherDBusInterface(&app);
+    UpdaterDBusInterface updaterDBusInterface(&app);
+    ThumbnailerDBusInterface thumbnailerDBusInterface(&app);
+
+    return QCoreApplication::exec();
 }

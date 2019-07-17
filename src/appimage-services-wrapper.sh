@@ -29,7 +29,7 @@ if [[ -z $command ]] ; then
   "$APPDIR/usr/bin/utils/update_launchers_desktop_entries.sh"
 
   echo "Launching daemon"
-  appimage-services
+  $APPDIR/usr/bin/appimage-services
 else
   case $command in
     -h|--help)
