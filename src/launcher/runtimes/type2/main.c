@@ -727,6 +727,7 @@ int main(int argc, char *argv[]) {
             setenv("APPIMAGE", fullpath, 1);
             setenv("ARGV0", argv0_path, 1);
             setenv("APPDIR", prefix, 1);
+            setenv("DESKTOPINTEGRATION", "False", 1);
 
             execv(apprun_path, new_argv);
 
