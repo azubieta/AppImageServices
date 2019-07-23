@@ -332,6 +332,7 @@ main(int argc, char* argv[]) {
         /* Setting some environment variables that the app "inside" might use */
         setenv("APPIMAGE", fullpath, 1);
         setenv("APPDIR", mount_dir, 1);
+        setenv("DESKTOPINTEGRATION", "False", 1);
 
         /* Original working directory */
         char cwd[1024];
