@@ -11,7 +11,8 @@ class AppImageServices(ConanFile):
     version = "0.1"
     settings = "os", "compiler", "build_type", "arch"
 
-    requires = (("OpenSSL/1.1.1b@conan/stable"),
+    requires = (("zlib/1.2.11@conan/stable"),
+                ("OpenSSL/1.1.1b@conan/stable"),
                 ("harfbuzz/2.4.0@appimage-conan-community/stable"),
                 ("glib/2.40.0@appimage-conan-community/stable"),
                 ("libpng/1.6.36@bincrafters/stable"),
@@ -35,12 +36,11 @@ class AppImageServices(ConanFile):
         "cairo:shared": True,
         "lzma:shared": True,
         "pango:shared": True,
-        "zlib:shared": True,
         "librsvg:shared": True,
         "fontconfig:shared": True,
         "freetype:shared": False,
         "glib:shared": True,
-        }
+    }
 
     build_requires = ("patchelf_installer/0.9@appimage-conan-community/stable",
                       "gtest/1.8.1@bincrafters/stable",
