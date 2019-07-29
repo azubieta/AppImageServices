@@ -1,0 +1,6 @@
+add_executable(AppImageServicesInstallerTests AppImageServicesInstallerTests.cpp)
+target_link_libraries(AppImageServicesInstallerTests AppImageServicesInstaller GTest::Main GTest::GTest)
+target_add_test_data_compile_definitions(AppImageServicesInstallerTests)
+
+gtest_discover_tests(AppImageServicesInstallerTests)
+add_test(AppImageServicesInstallerTests AppImageServicesInstallerTests)
