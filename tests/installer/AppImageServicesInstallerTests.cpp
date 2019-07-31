@@ -27,10 +27,10 @@ TEST_F(AppImageServicesTests, install) {
 
     char* pathMd5 = appimage_get_md5(targetBinPath.toLocal8Bit());
     QString desktopEntryPath =
-            temporaryDir.path() + "/share/applications/appimagekit_" + pathMd5 + "-appimagetool.desktop";
+            temporaryDir.path() + "/share/applications/appimagekit_" + pathMd5 + "-QtWidgetsApplication.desktop";
     ASSERT_TRUE(QFile::exists(desktopEntryPath));
 
     QString inconEntryPath =
-            temporaryDir.path() + "/share/icons/hicolor/scalable/apps/appimagekit_" + pathMd5 + "_appimagetool.svg";
+            temporaryDir.path() + "/share/icons/hicolor/512x512/apps/appimagekit_" + pathMd5 + "_QtWidgetsApplication.png";
     ASSERT_TRUE(QFile::exists(inconEntryPath));
 }

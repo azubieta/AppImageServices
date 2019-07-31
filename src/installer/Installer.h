@@ -1,10 +1,13 @@
 #pragma once
+// system
+#include <memory>
 
 // libraries
-#include <memory>
+#include <QDir>
 #include <QString>
 #include <appimage/desktop_integration/IntegrationManager.h>
 
+// local
 #include "InstallerError.h"
 
 class Installer {
@@ -25,6 +28,8 @@ protected:
 
     void registerApplication(const QString &targetBinaryPath) const;
 
+
+    void addUninstallDesktopEntryAction(const std::string& appImagePath) const;
 private:
     QDir installDir;
     QString binDirPath = "bin";

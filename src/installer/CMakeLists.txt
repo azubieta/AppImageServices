@@ -22,6 +22,13 @@ target_link_libraries(
 )
 
 ###
+# Helpers
+##
+add_executable(install-helper install-helper.cpp)
+target_link_libraries(install-helper AppImageServicesInstaller)
+install(TARGETS install-helper RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+
+###
 # Self install scripts
 ###
 install(
