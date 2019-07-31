@@ -21,13 +21,14 @@ public:
 
     const QString &getBinDir() const;
 
+    void uninstall(const QString &appImagePath);
+
 protected:
     QDir createBinDir() const;
 
     const QString installBinary(const QString &appImagePath, const QDir &binDir) const;
 
     void registerApplication(const QString &targetBinaryPath) const;
-
 
     void addUninstallDesktopEntryAction(const std::string& appImagePath) const;
 private:
@@ -36,5 +37,7 @@ private:
     QString dataDirPath = "share";
 
     appimage::desktop_integration::IntegrationManager integrationManager;
+
+    void unregisterApplication(const QString &appImagePath) const;
 };
 

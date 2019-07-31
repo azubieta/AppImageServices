@@ -28,6 +28,11 @@ add_executable(install-helper install-helper.cpp)
 target_link_libraries(install-helper AppImageServicesInstaller)
 install(TARGETS install-helper RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 
+add_executable(uninstall-helper uninstall-helper.cpp)
+target_link_libraries(uninstall-helper AppImageServicesInstaller)
+install(TARGETS uninstall-helper RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+
+
 ###
 # Self install scripts
 ###

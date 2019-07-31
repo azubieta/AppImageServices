@@ -115,18 +115,39 @@ void Installer::addUninstallDesktopEntryAction(const std::string &appImagePath) 
                 uninstallCommandArgs = uninstallCommandArgs.arg(QString::fromStdString(appImagePath));
             }
 
-
             entry.set("Desktop Action Uninstall/Exec", (uninstallCommand + " " + uninstallCommandArgs).toStdString());
             entry.set("Desktop Action Uninstall/TryExec", uninstallCommand.toStdString());
 
             std::ofstream ofstream(targetDesktopFilePath.toStdString());
             ofstream << entry;
         } else {
-            qWarning() << "Unable to add uninstall action. Generated desktop file not found at: " << targetDesktopFilePath;
+            qWarning() << "Unable to add uninstall action. Generated desktop file not found at: "
+                       << targetDesktopFilePath;
         }
     } catch (const AppImageError &error) {
         qWarning() << "Unable to add uninstall action. " << error.what();
     }
 
+}
+
+void Installer::uninstall(const QString &appImagePath) {
+    try {
+        appimage::core::AppImage(appImagePath.toStdString());
+        bool succeed = QFile::remove(appImagePath);
+        if (!succeed)
+            throw InstallerError("Unable to uninstall application " + appImagePath + ". Unable to remove file.");
+
+        unregisterApplication(appImagePath);
+    } catch (const appimage::core::AppImageError &error) {
+        throw InstallerError("Unable to uninstall application " + appImagePath + ". " + error.what());
+    }
+}
+
+void Installer::unregisterApplication(const QString &appImagePath) const {
+    try {
+        integrationManager.unregisterAppImage(appImagePath.toStdString());
+    } catch (const appimage::core::AppImageError &error) {
+        throw InstallerError(error.what());
+    }
 }
 
