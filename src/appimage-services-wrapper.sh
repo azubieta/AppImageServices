@@ -1,7 +1,5 @@
 #!/bin/bash
 
-echo "Starting sctipt $0"
-
 display_usage() {
   echo
   echo "Usage: $0"
@@ -34,6 +32,12 @@ else
   case $command in
     -h|--help)
       display_usage
+      ;;
+        install)
+      "$APPDIR/usr/bin/install-helper" "${@:2}"
+      ;;
+        uninstall)
+      "$APPDIR/usr/bin/uninstall-helper" "${@:2}"
       ;;
     self-install)
       "$APPDIR/usr/bin/appimage-services-installer.sh"
