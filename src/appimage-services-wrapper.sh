@@ -6,8 +6,11 @@ display_usage() {
   echo
   echo " -h, --help   Display usage instructions"
   echo " launch <target appimage> <target appimage type>, Start an AppImage using the embedded runtime"
-  echo " self-install, Install the AppImage in the system"
-  echo " self-uninstall, Install the AppImage in the system"
+  echo " install <AppImage path>, Install the AppImage in the system"
+  echo " uninstall <AppImage installed path>, Uninstall the AppImage from the system"
+  echo
+  echo " self-install, Install AppImageServices on the system"
+  echo " self-uninstall, Uninstall AppImageServices from the system"
   echo
 }
 
