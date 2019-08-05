@@ -1,15 +1,16 @@
 #!/bin/bash
 
-echo "Starting sctipt $0"
-
 display_usage() {
   echo
   echo "Usage: $0"
   echo
   echo " -h, --help   Display usage instructions"
   echo " launch <target appimage> <target appimage type>, Start an AppImage using the embedded runtime"
-  echo " self-install, Install the AppImage in the system"
-  echo " self-uninstall, Install the AppImage in the system"
+  echo " install <AppImage path>, Install the AppImage in the system"
+  echo " uninstall <AppImage installed path>, Uninstall the AppImage from the system"
+  echo
+  echo " self-install, Install AppImageServices on the system"
+  echo " self-uninstall, Uninstall AppImageServices from the system"
   echo
 }
 
@@ -34,6 +35,12 @@ else
   case $command in
     -h|--help)
       display_usage
+      ;;
+        install)
+      "$APPDIR/usr/bin/install-helper" "${@:2}"
+      ;;
+        uninstall)
+      "$APPDIR/usr/bin/uninstall-helper" "${@:2}"
       ;;
     self-install)
       "$APPDIR/usr/bin/appimage-services-installer.sh"

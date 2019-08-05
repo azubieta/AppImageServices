@@ -15,6 +15,7 @@ target_link_libraries(
     appimage-services
     PRIVATE freetype
     PRIVATE AppImageServicesLauncher
+    PRIVATE AppImageServicesInstaller
     PRIVATE AppImageServicesUpdater
     PRIVATE AppImageServicesInspector
     PRIVATE AppImageServicesThumbnailer

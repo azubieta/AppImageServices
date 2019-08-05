@@ -7,7 +7,7 @@ endif()
 set(TESTS_DATA_TYPE2_APPIMAGE "${TESTS_DATA_DIR}/type2_x86_64.AppImage")
 if(NOT EXISTS ${TESTS_DATA_TYPE2_APPIMAGE})
     file(
-        DOWNLOAD https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
+        DOWNLOAD https://github.com/linuxdeploy/linuxdeploy-plugin-qt-examples/releases/download/continuous/QtWidgetsApplication-x86_64.AppImage
         ${TESTS_DATA_TYPE2_APPIMAGE} SHOW_PROGRESS
     )
 endif()
