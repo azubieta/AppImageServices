@@ -1,11 +1,12 @@
 // libraries
+#include <QtCore/QDebug>
 #include <QtCore/QCoreApplication>
 #include <QtCore/QCommandLineParser>
 
 // local
 #include "Installer.h"
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
     QCoreApplication app(argc, argv);
     QCoreApplication::setApplicationName("appimage-services-uninstall-helper");
     QCoreApplication::setApplicationVersion("1.0");
@@ -21,11 +22,15 @@ int main(int argc, char **argv) {
     const QStringList args = parser.positionalArguments();
     if (args.size() < 1)
         parser.showHelp(1);
-    else {
+
+    try {
         Installer installer("/usr/local");
-        for (const QString &appImagePath: args)
+        for (const QString& appImagePath: args)
             installer.uninstall(appImagePath);
 
-        return  0;
+        return 0;
+    } catch (const InstallerError& error) {
+        qCritical() << error.what();
+        return 1;
     }
 }
