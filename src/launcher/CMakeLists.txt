@@ -44,7 +44,7 @@ target_include_directories(
 
 target_link_libraries(
     AppImageServicesLauncher
-    PUBLIC Qt5::DBus Qt5::Core libappimage XdgUtils::DesktopEntry
+    PUBLIC Qt5::DBus Qt5::Core libappimage XdgUtils::DesktopEntry AppImageServicesCommon
 )
 
 # Install D-Bus interface descriptor

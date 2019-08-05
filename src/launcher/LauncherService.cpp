@@ -15,6 +15,7 @@
 #include "LauncherService.h"
 #include "LauncherDefines.h"
 #include "../updater/UpdaterDefines.h"
+#include "utils.h"
 
 bool LauncherService::registerApp(const std::string& appImagePath) const {
     try {
@@ -54,7 +55,7 @@ void LauncherService::registerAppAddRemoveDesktopEntryAction(const std::string& 
 
     char* desktopFilePath = appimage_registered_desktop_file_path(appImagePath.c_str(), nullptr, false);
     if (desktopFilePath != nullptr) {
-        QSettings settings;
+        QSettings settings(settingsFilePath(), QSettings::IniFormat);
         std::ifstream ifstream(desktopFilePath);
         DesktopEntry entry(ifstream);
 
@@ -99,7 +100,7 @@ void LauncherService::registerAppAddUpdateDesktopEntryAction(const std::string& 
 
     char* desktopFilePath = appimage_registered_desktop_file_path(appImagePath.c_str(), nullptr, false);
     if (desktopFilePath != nullptr) {
-        QSettings settings;
+        QSettings settings(settingsFilePath(), QSettings::IniFormat);
         std::ifstream ifstream(desktopFilePath);
         DesktopEntry entry(ifstream);
 

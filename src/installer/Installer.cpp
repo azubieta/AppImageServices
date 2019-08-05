@@ -13,14 +13,15 @@
 
 // local
 #include "Installer.h"
+#include "utils.h"
 
-Installer::Installer(const QString &installPrefix) : installDir(installPrefix),
+Installer::Installer(const QString& installPrefix) : installDir(installPrefix),
                                                      integrationManager(
                                                              installDir.absoluteFilePath(dataDirPath).toStdString()) {
 
 }
 
-void Installer::install(const QString &appImagePath) {
+void Installer::install(const QString& appImagePath) {
     QDir binDir = createBinDir();
 
     QString targetBinaryPath = installBinary(appImagePath, binDir);
@@ -28,19 +29,19 @@ void Installer::install(const QString &appImagePath) {
     registerApplication(targetBinaryPath);
 }
 
-void Installer::registerApplication(const QString &targetBinaryPath) const {
+void Installer::registerApplication(const QString& targetBinaryPath) const {
     try {
         appimage::core::AppImage appImage(targetBinaryPath.toStdString());
         if (integrationManager.shallAppImageBeRegistered(appImage)) {
             integrationManager.registerAppImage(appImage);
             addUninstallDesktopEntryAction(targetBinaryPath.toStdString());
         }
-    } catch (const appimage::core::AppImageError &error) {
+    } catch (const appimage::core::AppImageError& error) {
         throw InstallerError(error.what());
     }
 }
 
-const QString Installer::installBinary(const QString &appImagePath, const QDir &binDir) const {
+QString Installer::installBinary(const QString& appImagePath, const QDir& binDir) const {
     QFileInfo appImageFileInfo(appImagePath);
     QFile appImageFile(appImagePath);
     QString targetFilePath = binDir.absoluteFilePath(appImageFileInfo.fileName());
@@ -67,11 +68,11 @@ QString Installer::getInstallPrefix() const {
     return installDir.path();
 }
 
-const QString &Installer::getBinDir() const {
+const QString& Installer::getBinDir() const {
     return binDirPath;
 }
 
-void Installer::addUninstallDesktopEntryAction(const std::string &appImagePath) const {
+void Installer::addUninstallDesktopEntryAction(const std::string& appImagePath) const {
     using namespace XdgUtils::DesktopEntry;
     using namespace appimage::core;
     using namespace appimage::utils;
@@ -79,7 +80,7 @@ void Installer::addUninstallDesktopEntryAction(const std::string &appImagePath) 
     try {
         // Guess the target desktop file path
         QDir desktopEntriesDir(installDir.absoluteFilePath(dataDirPath) + "/applications/");
-        char *pathMd5 = appimage_get_md5(appImagePath.c_str());
+        char* pathMd5 = appimage_get_md5(appImagePath.c_str());
         QString nameFilter = QString("appimagekit_%1-*").arg(pathMd5);
         QStringList entries = desktopEntriesDir.entryList({nameFilter});
 
@@ -88,7 +89,8 @@ void Installer::addUninstallDesktopEntryAction(const std::string &appImagePath) 
             targetDesktopFilePath = desktopEntriesDir.absoluteFilePath(entries.first());
 
         if (QFile::exists(targetDesktopFilePath)) {
-            QSettings settings;
+            QSettings settings(settingsFilePath(), QSettings::IniFormat);
+
             std::ifstream ifstream(targetDesktopFilePath.toStdString());
             DesktopEntry entry(ifstream);
 
@@ -106,6 +108,10 @@ void Installer::addUninstallDesktopEntryAction(const std::string &appImagePath) 
             QString uninstallCommand = settings.value("Launcher/UninstallCommand", "").toString();
             QString uninstallCommandArgs = settings.value("Launcher/UninstallCommandArgs", "").toString();
 
+            qDebug() << settings.fileName();
+            qDebug() << settings.allKeys();
+            qDebug() << "settings uninstall command " << uninstallCommand;
+            qDebug() << "settings uninstall command args" << uninstallCommandArgs;
             // Use direct dbus calls as fallback method
             if (uninstallCommand.isEmpty()) {
                 uninstallCommand = "pkexec appimage-services";
@@ -124,29 +130,29 @@ void Installer::addUninstallDesktopEntryAction(const std::string &appImagePath) 
             qWarning() << "Unable to add uninstall action. Generated desktop file not found at: "
                        << targetDesktopFilePath;
         }
-    } catch (const AppImageError &error) {
+    } catch (const AppImageError& error) {
         qWarning() << "Unable to add uninstall action. " << error.what();
     }
 
 }
 
-void Installer::uninstall(const QString &appImagePath) {
+void Installer::uninstall(const QString& appImagePath) {
     try {
-        appimage::core::AppImage(appImagePath.toStdString());
+        appimage::core::AppImage appImage(appImagePath.toStdString());
         bool succeed = QFile::remove(appImagePath);
         if (!succeed)
             throw InstallerError("Unable to uninstall application " + appImagePath + ". Unable to remove file.");
 
         unregisterApplication(appImagePath);
-    } catch (const appimage::core::AppImageError &error) {
+    } catch (const appimage::core::AppImageError& error) {
         throw InstallerError("Unable to uninstall application " + appImagePath + ". " + error.what());
     }
 }
 
-void Installer::unregisterApplication(const QString &appImagePath) const {
+void Installer::unregisterApplication(const QString& appImagePath) const {
     try {
         integrationManager.unregisterAppImage(appImagePath.toStdString());
-    } catch (const appimage::core::AppImageError &error) {
+    } catch (const appimage::core::AppImageError& error) {
         throw InstallerError(error.what());
     }
 }

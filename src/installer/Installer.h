@@ -26,7 +26,7 @@ public:
 protected:
     QDir createBinDir() const;
 
-    const QString installBinary(const QString &appImagePath, const QDir &binDir) const;
+    QString installBinary(const QString &appImagePath, const QDir &binDir) const;
 
     void registerApplication(const QString &targetBinaryPath) const;
 
