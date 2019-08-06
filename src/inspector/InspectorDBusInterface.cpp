@@ -1,6 +1,10 @@
+// system
+#include <sstream>
+
 // libraries
 #include <appimage/appimage++.h>
 #include <appimage/utils/ResourcesExtractor.h>
+#include <XdgUtils/DesktopEntry/DesktopEntry.h>
 
 // local
 #include "utils.h"
@@ -66,6 +70,30 @@ bool InspectorDBusInterface::extractFile(QString appImagePath, QString source, Q
         return true;
     } catch (const std::runtime_error& error) {
         qWarning() << "Unable to extract AppImage file " << source << " to " << target << " error: " << error.what();
+        return false;
+    }
+}
+
+bool InspectorDBusInterface::extractApplicationIcon(const QString& appImagePath, const QString& targetPath) {
+    std::string iconPath;
+    try {
+        QString path = removeUriProtocolFromPath(appImagePath);
+        appimage::core::AppImage appImage(path.toStdString());
+        appimage::utils::ResourcesExtractor extractor(appImage);
+
+        std::string desktopEntryPath = extractor.getDesktopEntryPath();
+        std::stringstream stream(extractor.extractText(desktopEntryPath));
+        XdgUtils::DesktopEntry::DesktopEntry desktopEntry(stream);
+
+        std::string iconName = static_cast<std::string>(desktopEntry["Desktop Entry/Icon"]);
+        std::vector<std::string> iconPaths = extractor.getIconFilePaths(iconName);
+        iconPath = iconPaths.empty() ? ".DirIcon" : iconPaths[0];
+
+        extractor.extractTo({{iconPath, targetPath.toStdString()}});
+        return true;
+    } catch (const std::runtime_error& error) {
+        qWarning() << "Unable to extract AppImage icon " << QString::fromStdString(iconPath) << " to " << targetPath
+                   << " error: " << error.what();
         return false;
     }
 }
