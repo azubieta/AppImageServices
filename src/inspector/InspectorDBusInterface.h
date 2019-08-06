@@ -29,6 +29,14 @@ public Q_SLOTS:
     QString getApplicationInfo(QString appImagePath);
 
     /**
+     * Extract the Application icon to the <targetPath>
+     * @param appImagePath
+     * @param targetPath
+     * @return true on success, false otherwise
+     */
+    bool extractApplicationIcon(const QString& appImagePath, const QString& targetPath);
+
+    /**
      * List files included in the AppImage.
      * @param appImagePath
      * @return
