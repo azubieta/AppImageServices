@@ -11,9 +11,9 @@ It's meant to be used by file managers, software centers and other tools to prov
 - Applications updates using [AppImageUpdaterBridge](https://github.com/antony-jr/AppImageUpdaterBridge) as backend
 - Application metadata extraction
 - Custom runtime for AppImage execution (useful to avoid giving execution permissions to every file) 
+- System wide installation (applications installed to `/usr/local/bin` and registered for all users)
 
 **TO BE IMPLEMENTED**
-- System wide installation (applications installed to `/usr/local/bin` and registered for all users)
 - Applications registry (to be able to track every installed application)
 - Applications directories monitoring (to enable transparent registration of applications)
 
