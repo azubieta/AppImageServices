@@ -52,6 +52,10 @@ public:
 
     void addLink(const QString& type, const QString& url);
 
+    const QStringList& getFlags() const;
+
+    void setFlags(const QStringList& settings);
+
 private:
     QStringList jsonArrayToStringList(const QJsonArray& array) const;
 
@@ -68,4 +72,5 @@ private:
     QStringList categories;
     QStringList mimeTypes;
     QMap<QString, QString> links;
+    QStringList flags;
 };

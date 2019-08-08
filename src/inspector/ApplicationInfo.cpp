@@ -24,6 +24,7 @@ ApplicationInfo::ApplicationInfo(const class QJsonObject& jsonObject) {
     categories = jsonArrayToStringList(jsonObject.value("categories").toArray());
     mimeTypes = jsonArrayToStringList(jsonObject.value("mimeTypes").toArray());
     links = jsonObjectToStringsMap(jsonObject.value("links").toObject());
+    flags = jsonArrayToStringList(jsonObject.value("flags").toArray());
 }
 
 
@@ -55,6 +56,7 @@ QJsonObject ApplicationInfo::QJsonObject() {
     object["categories"] = QJsonArray::fromStringList(categories);
     object["mimeTypes"] = QJsonArray::fromStringList(mimeTypes);
     object["links"] = stringsMapToJsonObject(links);
+    object["flags"] = QJsonArray::fromStringList(flags);
 
     return object;
 }
@@ -141,4 +143,12 @@ void ApplicationInfo::setLinks(const QMap<QString, QString>& links) {
 
 void ApplicationInfo::addLink(const QString& type, const QString& url) {
     links[type] = url;
+}
+
+const QStringList& ApplicationInfo::getFlags() const {
+    return flags;
+}
+
+void ApplicationInfo::setFlags(const QStringList& settings) {
+    ApplicationInfo::flags = settings;
 }

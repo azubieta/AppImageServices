@@ -34,10 +34,23 @@ void AppImageInfoReader::readDesktopEntry() {
         QStringList categories = readDesktopEntryStringList(desktopEntry.get("Desktop Entry/Categories", ""));
         QStringList mimeTypes = readDesktopEntryStringList(desktopEntry.get("Desktop Entry/MimeType", ""));
 
+        QStringList flags;
+
+        if (desktopEntry.exists("Desktop Entry/Terminal")) {
+            if (desktopEntry["Desktop Entry/Terminal"])
+                flags += "TERMINAL_APP";
+        }
+
+        if (desktopEntry.exists("Desktop Entry/X-AppImage-Integrate")) {
+            if (!desktopEntry["Desktop Entry/X-AppImage-Integrate"])
+                flags += "NO_INTEGRATE";
+        }
+
         info.setName(name);
         info.setSummary(summary);
         info.setCategories(categories);
         info.setMimeTypes(mimeTypes);
+        info.setFlags(flags);
     } catch (const AppImageError& error) {
         std::cerr << "Error while accessing the AppImage " << error.what() << std::endl;
     } catch (const DesktopEntryError& error) {
