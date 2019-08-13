@@ -51,6 +51,7 @@
 #include "utils.h"
 #include "elf.h"
 #include "md5.h"
+#include "appimagelauncher_interface.h"
 
 #ifndef ENABLE_DLOPEN
 #define ENABLE_DLOPEN
@@ -574,6 +575,13 @@ int main(int argc, char *argv[]) {
             dlclose(libbsd);
         }
 #endif
+    }
+
+    // Allow to  hook up an integration assistant.
+    if (tryForwardExecToIntegrationAssistant(argc, argv, appimage_path) == 0) {
+        //  A '0' return value means that the assistant took care of the execution therefore we can safely exit
+        fprintf(stdout, "AppImage execution was handled by the integration assistant\n");
+        return 0;
     }
 
     // temporary directories are required in a few places
