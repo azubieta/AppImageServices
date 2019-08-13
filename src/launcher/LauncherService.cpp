@@ -140,17 +140,13 @@ void LauncherService::registerAppAddUpdateDesktopEntryAction(const std::string& 
     }
 }
 
-bool LauncherService::launch(const std::string& path, const QStringList& args) const {
+bool LauncherService::launch(const std::string& path, QStringList args) const {
     try {
         appimage::core::AppImage appImage(path);
-
-        // Set TARGET_APPIMAGE environment variable
-        QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
-        env.insert("TARGET_APPIMAGE", QString::fromStdString(path));
+        args.push_front(QString::fromStdString(path));
 
         // Configure runtime process
         QProcess process;
-        process.setProcessEnvironment(env);
         process.setArguments(args);
 
         switch (appImage.getFormat()) {

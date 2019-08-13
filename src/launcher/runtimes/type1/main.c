@@ -191,7 +191,7 @@ char* getArg(int argc, char* argv[], char chr) {
 
 
 int
-main(int argc, char* argv[]) {
+main(int launcherArgc, char* launcherArgv[]) {
     int dir_fd, res;
     char mount_dir[] = "/tmp/.mount_XXXXXX";  /* create mountpoint */
     char filename[100]; /* enough for mount_dir + "/AppRun" */
@@ -210,53 +210,58 @@ main(int argc, char* argv[]) {
 
     char appimage_path[PATH_MAX];
     char argv0_path[PATH_MAX];
-    /* We might want to operate on a target appimage rather than this file itself,
-     * e.g., for appimaged which must not run untrusted code from random AppImages.
-     * This variable is intended for use by e.g., appimaged and is subject to
-     * change any time. Do not rely on it being present. We might even limit this
-     * functionality specifically for builds used by appimaged.
-     */
-    if (getenv("TARGET_APPIMAGE") == NULL) {
-        strcpy(appimage_path, "/proc/self/exe");
-        strcpy(argv0_path, argv[0]);
-    } else {
-        strcpy(appimage_path, getenv("TARGET_APPIMAGE"));
-        strcpy(argv0_path, getenv("TARGET_APPIMAGE"));
+
+    if (launcherArgc < 2) {
+        fprintf(stderr, "Missing target appimage\n");
+        fprintf(stderr, "Usage: %s <appimage path> [args]\n", launcherArgv[0]);
+        exit(1);
+    }
+
+    int argc = launcherArgc - 1;
+    char* argv[launcherArgc];
+    argv[0] = strdup(launcherArgv[1]);
+    for (int i = 2; i < argc; ++i)
+        argv[i - 1] = strdup(launcherArgv[i]);
+
+
+    strcpy(appimage_path, launcherArgv[1]);
+    strcpy(argv0_path, launcherArgv[1]);
+    setenv("TARGET_APPIMAGE", appimage_path, 1);
 
 #ifdef ENABLE_SETPROCTITLE
-        // load libbsd dynamically to change proc title
-        // this is an optional feature, therefore we don't hard require it
-        void* libbsd = dlopen("libbsd.so", RTLD_NOW);
+    // load libbsd dynamically to change proc title
+    // this is an optional feature, therefore we don't hard require it
+    void* libbsd = dlopen("libbsd.so", RTLD_NOW);
 
-        if (libbsd != NULL) {
-            // clear error state
-            dlerror();
+    if (libbsd != NULL) {
+        // clear error state
+        dlerror();
 
-            // try to load the two required symbols
-            void (*setproctitle_init)(int, char**, char**) = dlsym(libbsd, "setproctitle_init");
+        // try to load the two required symbols
+        void (*setproctitle_init)(int, char**, char**) = dlsym(libbsd, "setproctitle_init");
 
-            char* error;
+        char* error;
 
-            if ((error = dlerror()) == NULL) {
-                void (*setproctitle)(const char*, char*) = dlsym(libbsd, "setproctitle");
+        if ((error = dlerror()) == NULL) {
+            void (*setproctitle)(const char*, char*) = dlsym(libbsd, "setproctitle");
 
-                if (dlerror() == NULL) {
-                    char buffer[1024];
-                    strcpy(buffer, getenv("TARGET_APPIMAGE"));
-                    for (int i = 1; i < argc; i++) {
-                        strcat(buffer, " ");
-                        strcat(buffer, argv[i]);
-                    }
-
-                    (*setproctitle_init)(argc, argv, environ);
-                    (*setproctitle)("%s", buffer);
+            if (dlerror() == NULL) {
+                char buffer[1024];
+                strcpy(buffer, getenv("TARGET_APPIMAGE"));
+                for (int i = 1; i < argc; i++) {
+                    strcat(buffer, " ");
+                    strcat(buffer, argv[i]);
                 }
-            }
 
-            dlclose(libbsd);
+                (*setproctitle_init)(argc, argv, environ);
+                (*setproctitle)("%s", buffer);
+            }
         }
-#endif
+
+        dlclose(libbsd);
     }
+#endif
+
 
     // Allow to  hook up an integration assistant.
     if (tryForwardExecToIntegrationAssistant(argc, argv, appimage_path) == 0) {
