@@ -9,6 +9,7 @@ if [ "$EUID" -ne 0 ]; then
     DATA_DIR=$HOME/.local/share
     SYSTEMD_USER_DIR=$CONFIG_DIR/systemd/user
     DBUS_SYSTEM_SERVICES_DIR=$DATA_DIR/dbus-1/services
+
 else
     # Root installation
     BINDIR=/usr/local/bin
@@ -19,6 +20,9 @@ else
     SYSTEMD_USER_DIR=$CONFIG_DIR/systemd/user
     DBUS_SYSTEM_SERVICES_DIR=$DATA_DIR/dbus-1/services
 fi
+
+# User independent paths
+BINFMT_DIR=/usr/lib/binfmt.d/
 
 TYPE1_LAUNCHER_DESKTOP_ENTRY_TARGET_PATH="${APPLICATIONS_DIR}/org.appimage.services.launcher.type1.desktop"
 TYPE2_LAUNCHER_DESKTOP_ENTRY_TARGET_PATH="${APPLICATIONS_DIR}/org.appimage.services.launcher.type2.desktop"

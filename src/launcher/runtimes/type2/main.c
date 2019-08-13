@@ -535,7 +535,7 @@ int main(int launcherArgc, char* launcherArgv[]) {
     int argc = launcherArgc - 1;
     char* argv[launcherArgc];
     argv[0] = strdup(launcherArgv[1]);
-    for (int i = 2; i < argc; ++i)
+    for (int i = 2; i < launcherArgc; ++i)
         argv[i - 1] = strdup(launcherArgv[i]);
 
 
