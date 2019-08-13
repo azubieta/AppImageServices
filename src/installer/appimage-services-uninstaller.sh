@@ -30,3 +30,7 @@ echo "Removed $SYSTEMD_USER_DIR/appimage-services.service"
 
 rm $BINDIR/appimage-services
 echo "Removed $BINDIR/appimage-services"
+
+echo "Uninstalling runtimes to $BINDIR"
+rm -v $BINDIR/appimage-services-launcher-type-1
+rm -v $BINDIR/appimage-services-launcher-type-2

@@ -56,3 +56,7 @@ fi
 if [ ! $KEEP_INSTALLER ]; then
     rm --verbose $APPIMAGE
 fi
+
+echo "Installing runtimes to $BINDIR"
+cp -v $APPDIR/usr/bin/appimage-type1-runtime $BINDIR/appimage-services-launcher-type-1
+cp -v $APPDIR/usr/bin/appimage-type2-runtime $BINDIR/appimage-services-launcher-type-2
