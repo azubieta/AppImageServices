@@ -542,7 +542,8 @@ int main(int launcherArgc, char* launcherArgv[]) {
     strcpy(appimage_path, launcherArgv[1]);
     strcpy(argv0_path, launcherArgv[1]);
     setenv("TARGET_APPIMAGE", appimage_path, 1);
-
+    setenv("DESKTOPINTEGRATION", "false", 1);
+    
 #ifdef ENABLE_SETPROCTITLE
     // load libbsd dynamically to change proc title
     // this is an optional feature, therefore we don't hard require it
