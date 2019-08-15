@@ -95,7 +95,7 @@ void AppImageInfoReader::loadDataFiles() {
 }
 
 bool AppImageInfoReader::isMainDesktopFile(const QString& fileName) const {
-    return !fileName.contains("/") and fileName.contains(".desktop", Qt::CaseInsensitive);
+    return !fileName.contains("/") and fileName.endsWith(".desktop", Qt::CaseInsensitive);
 }
 
 QString AppImageInfoReader::extractIdFromDesktopFileName(QString& fileName) const {
