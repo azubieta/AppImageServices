@@ -4,6 +4,7 @@
 from conans import ConanFile, CMake, tools
 from shutil import copyfile
 import os
+import struct
 
 
 class AppImageServices(ConanFile):
@@ -88,3 +89,22 @@ class AppImageServices(ConanFile):
             cmake.install()
 
             self.run("linuxdeploy --appdir=%s --plugin qt --output appimage" % appDirPath, run_environment=True)
+
+            print('Removing AppImage magic bites to avoid being intercepted by the launchers')
+            appImagePath = self.findCreatedAppImage()
+            self.removeAppImageMagicBits(appImagePath)
+
+    def findCreatedAppImage(self):
+        appImagePath = ""
+        for root, dirs, files in os.walk("."):
+            for filename in files:
+                if 'appimage-services' in filename and filename.endswith("AppImage"):
+                    appImagePath = filename
+
+        return appImagePath
+
+    def removeAppImageMagicBits(self, appImagePath):
+        fout = open(appImagePath, 'r+b')
+        fout.seek(8)
+        fout.write(struct.pack('<BBB', 0, 0, 0))
+        fout.close()

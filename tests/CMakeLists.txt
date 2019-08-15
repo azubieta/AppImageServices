@@ -6,6 +6,7 @@ if(ENABLE_TESTING)
 
     # specific module tests
     add_subdirectory(installer)
+    add_subdirectory(launcher)
 
     enable_testing()
 else()

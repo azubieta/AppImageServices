@@ -5,6 +5,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <string.h>
+#include <stdbool.h>
 
 // local
 #include "appimagelauncher_interface.h"
@@ -46,5 +47,21 @@ int tryForwardExecToIntegrationAssistant(int argc, char* const* argv, char* appI
     }
 
     return EXIT_FAILURE;
+}
+
+int shouldIntegrationAssistantBeUsedOn(const char* target) {
+    char* envVar = getenv("APPIMAGELAUNCHER_DISABLE");
+    if (envVar != NULL)
+        return false;
+
+    // the target path points to the appimage-services binary (path ends with "appimage-services")
+    unsigned long targetStrLen = strlen(target);
+    if ((targetStrLen >= 17) && (0 == strcmp(target + targetStrLen - 17, "appimage-services")))
+        return false;
+
+    if (strncasecmp("/tmp/.mount_", target, 12) == 0)
+        return false;
+
+    return true;
 }
 

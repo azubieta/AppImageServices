@@ -261,10 +261,9 @@ main(int launcherArgc, char* launcherArgv[]) {
         dlclose(libbsd);
     }
 #endif
-
-
     // Allow to  hook up an integration assistant.
-    if (tryForwardExecToIntegrationAssistant(argc, argv, appimage_path) == 0) {
+    if (shouldIntegrationAssistantBeUsedOn(appimage_path) &&
+        tryForwardExecToIntegrationAssistant(argc, argv, appimage_path) == 0) {
         //  A '0' return value means that the assistant took care of the execution therefore we can safely exit
         fprintf(stdout, "AppImage execution was handled by the integration assistant\n");
         return 0;
