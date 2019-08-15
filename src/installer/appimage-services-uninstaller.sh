@@ -4,6 +4,7 @@
 SCRIPTS_DIR=$(dirname "$0")
 source ${SCRIPTS_DIR}/utils/debug-header.sh
 source ${SCRIPTS_DIR}/utils/settings.sh
+source ${SCRIPTS_DIR}/utils/launcher_desktop_entries.sh
 
 echo "Uninstalling AppImage Services"
 
@@ -42,3 +43,5 @@ echo "Removed $BINDIR/appimage-services"
 echo "Uninstalling runtimes to $BINDIR"
 rm -v $BINDIR/appimage-services-launcher-type-1
 rm -v $BINDIR/appimage-services-launcher-type-2
+
+launcher_desktop_entries_remove

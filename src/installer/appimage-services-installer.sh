@@ -4,6 +4,7 @@
 SCRIPTS_DIR=$(dirname "$0")
 source ${SCRIPTS_DIR}/utils/debug-header.sh
 source ${SCRIPTS_DIR}/utils/settings.sh
+source ${SCRIPTS_DIR}/utils/launcher_desktop_entries.sh
 
 echo "Intalling binary to $BINDIR/appimage-services"
 mkdir -p $BINDIR
@@ -57,8 +58,8 @@ if [ ! $KEEP_INSTALLER ]; then
 fi
 
 echo "Installing runtimes to $BINDIR"
-cp -v $APPDIR/usr/bin/appimage-type1-runtime $BINDIR/appimage-services-launcher-type-1
-cp -v $APPDIR/usr/bin/appimage-type2-runtime $BINDIR/appimage-services-launcher-type-2
+cp -v $APPDIR/usr/bin/appimage-type1-runtime $TYPE1_LAUNCHER_PATH
+cp -v $APPDIR/usr/bin/appimage-type2-runtime $TYPE2_LAUNCHER_PATH
 
 # binfmt is only available when installed as root
 if [ "$EUID" -eq 0 ]; then
@@ -68,3 +69,5 @@ if [ "$EUID" -eq 0 ]; then
 
   systemctl restart binfmt-support.service
 fi
+
+launcher_desktop_entries_create
