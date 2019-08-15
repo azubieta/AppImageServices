@@ -8,7 +8,6 @@
 
 // local
 #include "AppImageInfoReader.h"
-#include "ApplicationInfo.h"
 #include "InspectorDefines.h"
 
 class InspectorDBusInterface : public QObject {

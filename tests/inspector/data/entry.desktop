@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=Application
+Name=Subsurface
+GenericName=dive log program
+Comment=manage and display dive computer data
+Icon=subsurface-icon
+Exec=subsurface
+Terminal=true
+Categories=Utility;
+MimeType=x-fake-mime;
+Keywords=dive;log;divelog;divecomputer;dives;computer;
+X-AppImage-Version=4.8.3-243-g9009ea767848
+X-AppImage-Integrate=false

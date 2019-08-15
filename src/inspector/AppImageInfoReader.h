@@ -7,25 +7,23 @@
 #include <XdgUtils/DesktopEntry/DesktopEntry.h>
 
 // local
-#include "ApplicationInfo.h"
+#include "AppStreamReader.h"
 
-
-class AppImageInfoReader {
+class AppImageInfoReader : public AbstractReader {
 
 public:
     explicit AppImageInfoReader(const QString& appImagePath);
 
-    ApplicationInfo read();
+    QVariantMap readAppInfo() override;
 
 private:
-    ApplicationInfo info;
-
     appimage::core::AppImage appImage;
 
     bool hasDesktopEntry;
-    XdgUtils::DesktopEntry::DesktopEntry desktopEntry;
+    QString desktopEntryFile;
+    QByteArray desktopEntryData;
     bool hasAppStream;
-    QXmlStreamReader appstream;
+    QByteArray appStreamData;
 
     // File extraction
 
@@ -33,35 +31,13 @@ private:
 
     bool isMainDesktopFile(const QString& fileName) const;
 
-    QString extractIdFromDesktopFileName(QString& fileName) const;
-
     bool isAppStreamFile(const QString& fileName) const;
 
     // Desktop Entry
 
-    void readDesktopEntry();
-
     const char* const idKeyPath = "Desktop Entry/X-AppId";
-
-    QStringList readDesktopEntryStringList(const std::string& string);
 
     // Appstream
 
-    void readAppStream();
-
-    void readAppStreamComponent();
-
-    void readAppStreamComponentId();
-
-    void readAppStreamComponentProjectLicense();
-
-    void readAppStreamComponentName();
-
-    void readAppStreamComponentSummary();
-
-    void readAppStreamComponentUrl();
-
-    void readAppStreamComponentReleases();
-
-    void consumeElement();
+    QByteArray readFileData(appimage::core::PayloadIterator& itr) const;
 };
