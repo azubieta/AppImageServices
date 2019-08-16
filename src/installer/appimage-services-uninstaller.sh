@@ -5,6 +5,7 @@ SCRIPTS_DIR=$(dirname "$0")
 source ${SCRIPTS_DIR}/utils/debug-header.sh
 source ${SCRIPTS_DIR}/utils/settings.sh
 source ${SCRIPTS_DIR}/utils/launcher_desktop_entries.sh
+source ${SCRIPTS_DIR}/utils/binfmt.sh
 
 echo "Uninstalling AppImage Services"
 
@@ -19,14 +20,7 @@ else
   systemctl --user --global disable appimage-services
 fi
 
-# binfmt is only available when installed as root
-if [ "$EUID" -eq 0 ]; then
-  echo "Uninstall binfmt"
-    update-binfmts --package appimage --remove appimage-type1 $BINDIR/appimage-services-launcher-type-1
-    update-binfmts --package appimage --remove appimage-type2 $BINDIR/appimage-services-launcher-type-2
-
-  systemctl restart binfmt-support.service
-fi
+binfmt_remove
 
 # Uninstall files
 for SERVICE in "Launcher" "Updater" "Inspector"; do

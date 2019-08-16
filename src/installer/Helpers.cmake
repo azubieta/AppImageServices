@@ -17,6 +17,7 @@ install(
 install(
         PROGRAMS
         utils/launcher_desktop_entries.sh
+        utils/binfmt.sh
         utils/debug-header.sh
         utils/settings.sh
         DESTINATION ${CMAKE_INSTALL_BINDIR}/utils
