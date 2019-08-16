@@ -12,7 +12,7 @@
 #include "appimagelauncher_interface.h"
 
 int tryForwardExecToIntegrationAssistant(int argc, char* const* argv, char* appImagePath) {
-    char* assistantPath = strdup("/usr/bin/AppImageLauncher");
+    char* assistantPath = strdup("/usr/bin/appimage-firstrun");
 
     // prepare command args for execv
     int assistantArgsSize = argc + 2; // AppImage path and NULL ending fields are added

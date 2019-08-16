@@ -4,7 +4,7 @@ binfmt_register() {
   # binfmt is only available when installed as root
   if [ "$EUID" -eq 0 ]; then
     echo "Install binfmt entries"
-    if [ $(command -v update-binfmts) -eq 0 ]; then
+    if [ -n "$(command -v update-binfmts)" ]; then
       update-binfmts --package appimage --install appimage-type1 $TYPE1_LAUNCHER_PATH --magic 'AI\x01' --offset 8
       update-binfmts --package appimage --install appimage-type2 $TYPE2_LAUNCHER_PATH --magic 'AI\x02' --offset 8
     else
@@ -20,7 +20,7 @@ binfmt_remove() {
   # binfmt is only available when installed as root
   if [ "$EUID" -eq 0 ]; then
     echo "Remove binfmt entries"
-    if [ $(command -v update-binfmts) -eq 0 ]; then
+    if [ -n "$(command -v update-binfmts)" ]; then
       update-binfmts --package appimage --remove appimage-type1 $TYPE1_LAUNCHER_PATH
       update-binfmts --package appimage --remove appimage-type2 $TYPE2_LAUNCHER_PATH
     else
