@@ -5,8 +5,10 @@ find_package(XdgUtils REQUIRED COMPONENTS DesktopEntry)
 set(
     AppImageServicesInspectorSRCS
     InspectorDBusInterface.cpp
-    ApplicationInfo.cpp
-    AppImageInfoReader.cpp AppImageInfoReader.h)
+    AppImageInfoReader.cpp
+    AppStreamReader.cpp
+    DesktopEntryReader.cpp
+)
 
 # Generate the xml interface file from LauncherDBusInterface.h
 qt5_generate_dbus_interface(

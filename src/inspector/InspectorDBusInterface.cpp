@@ -46,9 +46,9 @@ QString InspectorDBusInterface::getApplicationInfo(QString appImagePath) {
         QString path = removeUriProtocolFromPath(appImagePath);
         if (QFile::exists(path)) {
             AppImageInfoReader reader(path);
-            ApplicationInfo info = reader.read();
+            QVariantMap appInfo = reader.readAppInfo();
 
-            QJsonDocument document(info.QJsonObject());
+            QJsonDocument document(QJsonObject::fromVariantMap(appInfo));
             return document.toJson();
         } else {
             return "{\"error\":\"Invalid path\"}";

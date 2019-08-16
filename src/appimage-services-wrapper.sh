@@ -26,11 +26,7 @@ export PATH=$PATH:$APPDIR/usr/bin
 # arguments parsing
 command="$1"
 if [[ -z $command ]] ; then
-  echo "Updating launchers desktop entries"
-  "$APPDIR/usr/bin/utils/update_launchers_desktop_entries.sh"
-
-  echo "Launching daemon"
-  $APPDIR/usr/bin/appimage-services
+    $APPDIR/usr/bin/appimage-services
 else
   case $command in
     -h|--help)

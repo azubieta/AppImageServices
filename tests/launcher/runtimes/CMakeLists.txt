@@ -1,0 +1,6 @@
+add_executable(AppImageLauncherRuntimeTests runtime-shared-tests.cpp)
+target_link_libraries(AppImageLauncherRuntimeTests runtimes-shared GTest::Main GTest::GTest)
+target_add_test_data_compile_definitions(AppImageLauncherRuntimeTests)
+
+gtest_discover_tests(AppImageLauncherRuntimeTests)
+add_test(AppImageLauncherRuntimeTests AppImageLauncherRuntimeTests)
