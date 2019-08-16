@@ -6,6 +6,7 @@
 #include <sys/wait.h>
 #include <string.h>
 #include <stdbool.h>
+#include <zconf.h>
 
 // local
 #include "appimagelauncher_interface.h"
@@ -25,12 +26,27 @@ int tryForwardExecToIntegrationAssistant(int argc, char* const* argv, char* appI
     // add null ending filed
     assistantArgs[assistantArgsSize - 1] = 0;
 
+    // modify process environment to avoid drkonki handling the errors
+    int assistantEnvSize = 0;
+    while (__environ[assistantEnvSize] != NULL)
+        ++assistantEnvSize;
+
+    // make rom for an additional element
+    assistantEnvSize += 2;
+
+    char** assistantEnv = malloc(sizeof(char*) * assistantEnvSize);
+    for (int i = 0; i < assistantEnvSize - 2; ++i)
+        assistantEnv[i] = __environ[i];
+
+    assistantEnv[assistantEnvSize - 2] = strdup("KDE_DEBUG=1");
+    assistantEnv[assistantEnvSize - 1] = NULL;
+
     pid_t p = fork();
     if (p == -1) {
         perror("assistant fork  failed\n");
         return EXIT_FAILURE;
     } else if (p == 0) {
-        execv(assistantPath, assistantArgs);
+        execve(assistantPath, assistantArgs, assistantEnv);
         // if execv fails the new process must be terminated
         exit(EXIT_FAILURE);
     }
