@@ -7,6 +7,7 @@
 #include <QProcess>
 #include <QCoreApplication>
 #include <appimage/appimage.h>
+#include <appimage/desktop_integration/IntegrationManager.h>
 #include <XdgUtils/DesktopEntry/DesktopEntry.h>
 #include <XdgUtils/DesktopEntry/DesktopEntryStringsValue.h>
 #include <QSettings>
@@ -23,6 +24,7 @@ bool LauncherService::registerApp(const std::string& appImagePath) const {
         integrationManager.registerAppImage(appImage);
         registerAppAddRemoveDesktopEntryAction(appImagePath);
         registerAppAddUpdateDesktopEntryAction(appImagePath);
+        integrationManager.generateThumbnails(appImage);
         return true;
     } catch (const appimage::core::AppImageError& ex) {
         std::cerr << "Unable to register: " << appImagePath << " : " << ex.what() << std::endl;
@@ -33,6 +35,7 @@ bool LauncherService::registerApp(const std::string& appImagePath) const {
 bool LauncherService::unregisterApp(const std::string& appImagePath) const {
     try {
         integrationManager.unregisterAppImage(appImagePath);
+        integrationManager.removeThumbnails(appImagePath);
         return true;
     } catch (const appimage::core::AppImageError& ex) {
         std::cerr << "Unable to register: " << appImagePath << " : " << ex.what() << std::endl;
