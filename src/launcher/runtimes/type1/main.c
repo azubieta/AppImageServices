@@ -231,6 +231,10 @@ main(int argc, char* argv[], char** envp) {
     setenv("TARGET_APPIMAGE", appimage_path, 1);
     setenv("DESKTOPINTEGRATION", "false", 1);
 
+    // Ignore the target AppImage parameter
+    argv = argv + 1;
+    --argc;
+
 #ifdef ENABLE_SETPROCTITLE
     // load libbsd dynamically to change proc title
     // this is an optional feature, therefore we don't hard require it
