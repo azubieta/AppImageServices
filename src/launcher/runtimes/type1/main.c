@@ -48,6 +48,7 @@ http://www.google.com/codesearch#n76pnUnMG18/trunk/blender/imbuf/intern/thumbs.c
 
 #include <ctype.h>
 #include <time.h>
+#include <stdlib.h>
 
 #include "md5.h"
 #include "appimagelauncher_interface.h"
@@ -208,6 +209,10 @@ main(int argc, char* argv[], char** envp) {
         exit(1);
     }
 
+    strcpy(appimage_path, realpath(argv[1], NULL));
+    strcpy(argv0_path, appimage_path);
+    argv[1] = appimage_path;
+
     int envp_size = 0;
     for (char** envp_itr = envp; *envp_itr != NULL; ++envp_itr)
         envp_size++;
@@ -218,16 +223,13 @@ main(int argc, char* argv[], char** envp) {
 
 
     // Allow to hook up an integration assistant.
-    if (shouldIntegrationAssistantBeUsedOn(argv[1]) &&
+    if (shouldIntegrationAssistantBeUsedOn(appimage_path) &&
         tryForwardExecToIntegrationAssistant(argc, argv, envp_copy) == 0) {
         //  A '0' return value means that the assistant took care of the execution therefore we can safely exit
         fprintf(stdout, "AppImage execution was handled by the integration assistant\n");
         return 0;
     }
 
-
-    strcpy(appimage_path, argv[1]);
-    strcpy(argv0_path, argv[1]);
     setenv("TARGET_APPIMAGE", appimage_path, 1);
     setenv("DESKTOPINTEGRATION", "false", 1);
 
