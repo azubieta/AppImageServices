@@ -4,11 +4,12 @@
  * Tries to forward the execution of the AppImage pointed by <appImagePath> the the integration assistant. This could
  * be used to show first time run dialogs.
  *
- * @param appImagePath
+ * @param argc
  * @param args
+ * @param envp
  * @return 0 if the integration assistant was properly executed, 1 otherwise.
  */
-int tryForwardExecToIntegrationAssistant(int argc, char* const* argv, char* appImagePath);
+int tryForwardExecToIntegrationAssistant(int argc, char* const* argv, char** envp);
 
 /**
  * Checks whether the integration assistant should be used to open <target>.
@@ -21,3 +22,13 @@ int tryForwardExecToIntegrationAssistant(int argc, char* const* argv, char* appI
  */
 int shouldIntegrationAssistantBeUsedOn(const char* target);
 
+/**
+ * Checks whether one of the following paths exists
+ *
+ * /usr/bin/appimage-assistant
+ * /usr/local/bin/appimage-assistant
+ * $HOME/.local/bin/appimage-assistant
+ *
+ * @return appimage-assistant path
+ */
+char* getAssistantPath();

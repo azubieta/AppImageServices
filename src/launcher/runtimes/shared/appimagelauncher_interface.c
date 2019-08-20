@@ -11,42 +11,27 @@
 // local
 #include "appimagelauncher_interface.h"
 
-int tryForwardExecToIntegrationAssistant(int argc, char* const* argv, char* appImagePath) {
-    char* assistantPath = strdup("/usr/bin/appimage-firstrun");
+char** buildAssistantArgList(int argc, char* const* argv, char* assistantPath);
 
-    // prepare command args for execv
-    int assistantArgsSize = argc + 2; // AppImage path and NULL ending fields are added
-    char* assistantArgs[assistantArgsSize];
-    assistantArgs[0] = strdup(assistantPath);
-    assistantArgs[1] = strdup(appImagePath);
-    // place original arguments after the target appImagePath
-    for (int i = 1; i < argc; ++i)
-        assistantArgs[i + 1] = strdup(argv[i]);
+char** buildAssistantEnvp(char** pString);
 
-    // add null ending filed
-    assistantArgs[assistantArgsSize - 1] = 0;
-
-    // modify process environment to avoid drkonki handling the errors
-    int assistantEnvSize = 0;
-    while (__environ[assistantEnvSize] != NULL)
-        ++assistantEnvSize;
-
-    // make rom for an additional element
-    assistantEnvSize += 2;
-
-    char** assistantEnv = malloc(sizeof(char*) * assistantEnvSize);
-    for (int i = 0; i < assistantEnvSize - 2; ++i)
-        assistantEnv[i] = __environ[i];
-
-    assistantEnv[assistantEnvSize - 2] = strdup("KDE_DEBUG=1");
-    assistantEnv[assistantEnvSize - 1] = NULL;
+int tryForwardExecToIntegrationAssistant(int argc, char* const* argv, char** envp) {
+    char* assistantPath = getAssistantPath();
+    if (assistantPath == NULL)
+        return 1;
 
     pid_t p = fork();
     if (p == -1) {
         perror("assistant fork  failed\n");
         return EXIT_FAILURE;
     } else if (p == 0) {
-        execve(assistantPath, assistantArgs, assistantEnv);
+        char** assistantArgs = buildAssistantArgList(argc, argv, assistantPath);
+
+        char** assistantEnvp = buildAssistantEnvp(envp);
+        // avoid drkonki handling the errors
+        setenv("KDE_DEBUG", "false", 1);
+
+        execve(assistantPath, assistantArgs, assistantEnvp);
         // if execv fails the new process must be terminated
         exit(EXIT_FAILURE);
     }
@@ -62,17 +47,68 @@ int tryForwardExecToIntegrationAssistant(int argc, char* const* argv, char* appI
         return es;
     }
 
-    return EXIT_FAILURE;
+}
+
+char** buildAssistantEnvp(char** envp) {
+    int envp_size = 0;
+    bool is_kde_debug_set = false;
+    // inspect existent env
+    for (; envp[envp_size] != NULL; ++envp_size)
+        if (strncmp("KDE_DEBUG=", envp[envp_size], 10) == 0)
+            is_kde_debug_set = true;
+
+    // count NULL termination
+    envp_size++;
+
+    // count the new entry
+    if (!is_kde_debug_set)
+        envp_size++;
+
+    char** assistantEnvp = calloc(envp_size, sizeof(char*));
+    for (int i = 0; envp[i] != NULL; ++i)
+        assistantEnvp[i] = strdup(envp[i]);
+
+    assistantEnvp[envp_size - 2] = strdup("KDE_DEBUG=false");
+    return assistantEnvp;
+}
+
+/**
+ * // prepare command args for execv
+ * @param argc
+ * @param argv
+ * @param assistantPath
+ * @return NULL terminated string list
+ */
+char** buildAssistantArgList(int argc, char* const* argv, char* assistantPath) {
+
+    // AppImage path and NULL ending fields are added
+    char** assistantArgs = calloc(argc, sizeof(char*));
+    assistantArgs[0] = assistantPath;
+
+    // place original arguments after the target appImagePath
+    for (int i = 1; i < argc; ++i)
+        assistantArgs[i] = strdup(argv[i]);
+
+    return assistantArgs;
+}
+
+char* getAssistantPath() {
+    if (access("/usr/bin/appimage-firstrun", F_OK) != -1)
+        return strdup("/usr/bin/appimage-firstrun");
+
+    if (access("/usr/local/bin/appimage-firstrun", F_OK) != -1)
+        return strdup("/usr/local/bin/appimage-firstrun");
+
+    char* binPath = strcat(getenv("HOME"), "/.local/bin/appimage-firstrun");
+    if (access(binPath, F_OK) != -1)
+        return binPath;
+
+    return NULL;
 }
 
 int shouldIntegrationAssistantBeUsedOn(const char* target) {
     char* envVar = getenv("APPIMAGELAUNCHER_DISABLE");
     if (envVar != NULL)
-        return false;
-
-    // the target path points to the appimage-services binary (path ends with "appimage-services")
-    unsigned long targetStrLen = strlen(target);
-    if ((targetStrLen >= 17) && (0 == strcmp(target + targetStrLen - 17, "appimage-services")))
         return false;
 
     if (strncasecmp("/tmp/.mount_", target, 12) == 0)

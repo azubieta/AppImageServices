@@ -191,7 +191,7 @@ char* getArg(int argc, char* argv[], char chr) {
 
 
 int
-main(int launcherArgc, char* launcherArgv[]) {
+main(int argc, char* argv[], char** envp) {
     int dir_fd, res;
     char mount_dir[] = "/tmp/.mount_XXXXXX";  /* create mountpoint */
     char filename[100]; /* enough for mount_dir + "/AppRun" */
@@ -199,33 +199,35 @@ main(int launcherArgc, char* launcherArgv[]) {
     char** real_argv;
     int i;
 
-    // We are using glib anyway for fuseiso, so we can use it here too to make our life easier
-    char* xdg_cache_home;
-    char thumbnails_medium_dir[FILE_MAX];
-    xdg_cache_home = (getenv("XDG_CACHE_HOME") == NULL
-                      ? g_build_filename(g_get_home_dir(), ".cache", NULL)
-                      : g_strdup(getenv("XDG_CACHE_HOME")));
-    sprintf(thumbnails_medium_dir, "%s/thumbnails/normal/", xdg_cache_home);
-    /*  printf("%s\n", thumbnails_medium_dir); */
-
     char appimage_path[PATH_MAX];
     char argv0_path[PATH_MAX];
 
-    if (launcherArgc < 2) {
+    if (argc < 2) {
         fprintf(stderr, "Missing target appimage\n");
-        fprintf(stderr, "Usage: %s <appimage path> [args]\n", launcherArgv[0]);
+        fprintf(stderr, "Usage: %s <appimage path> [args]\n", argv[0]);
         exit(1);
     }
 
-    int argc = launcherArgc - 1;
-    char* argv[launcherArgc];
-    argv[0] = strdup(launcherArgv[1]);
-    for (int i = 2; i < launcherArgc; ++i)
-        argv[i - 1] = strdup(launcherArgv[i]);
+    int envp_size = 0;
+    for (char** envp_itr = envp; *envp_itr != NULL; ++envp_itr)
+        envp_size++;
+
+    char** envp_copy = calloc(envp_size + 1, sizeof(char*));
+    for (int i = 0; i < envp_size; i++)
+        envp_copy[i] = strdup(envp[i]);
 
 
-    strcpy(appimage_path, launcherArgv[1]);
-    strcpy(argv0_path, launcherArgv[1]);
+    // Allow to hook up an integration assistant.
+    if (shouldIntegrationAssistantBeUsedOn(argv[1]) &&
+        tryForwardExecToIntegrationAssistant(argc, argv, envp_copy) == 0) {
+        //  A '0' return value means that the assistant took care of the execution therefore we can safely exit
+        fprintf(stdout, "AppImage execution was handled by the integration assistant\n");
+        return 0;
+    }
+
+
+    strcpy(appimage_path, argv[1]);
+    strcpy(argv0_path, argv[1]);
     setenv("TARGET_APPIMAGE", appimage_path, 1);
     setenv("DESKTOPINTEGRATION", "false", 1);
 
@@ -262,13 +264,6 @@ main(int launcherArgc, char* launcherArgv[]) {
         dlclose(libbsd);
     }
 #endif
-    // Allow to  hook up an integration assistant.
-    if (shouldIntegrationAssistantBeUsedOn(appimage_path) &&
-        tryForwardExecToIntegrationAssistant(argc, argv, appimage_path) == 0) {
-        //  A '0' return value means that the assistant took care of the execution therefore we can safely exit
-        fprintf(stdout, "AppImage execution was handled by the integration assistant\n");
-        return 0;
-    }
 
 
     if (mkdtemp(mount_dir) == NULL) {

@@ -88,12 +88,6 @@ bool is_writable_directory(char* str) {
     }
 }
 
-bool startsWith(const char* pre, const char* str) {
-    size_t lenpre = strlen(pre),
-            lenstr = strlen(str);
-    return lenstr < lenpre ? false : strncmp(pre, str, lenpre) == 0;
-}
-
 /* Fill in a stat structure. Does not set st_ino */
 sqfs_err private_sqfs_stat(sqfs* fs, sqfs_inode* inode, struct stat* st) {
     sqfs_err err = SQFS_OK;
@@ -521,29 +515,39 @@ bool build_mount_point(char* mount_dir, const char* const argv0, char const* con
     mount_dir[templen + 8 + namelen + 6] = 0; // null terminate destination
 }
 
-int main(int launcherArgc, char* launcherArgv[]) {
+int main(int argc, char** argv, char** envp) {
     char appimage_path[PATH_MAX] = {0x0};
     char argv0_path[PATH_MAX] = {0x0};
     char* arg;
 
-    if (launcherArgc < 2) {
+    if (argc < 2) {
         fprintf(stderr, "Missing target appimage\n");
-        fprintf(stderr, "Usage: %s <appimage path> [args]\n", launcherArgv[0]);
+        fprintf(stderr, "Usage: %s <appimage path> [args]\n", argv[0]);
         exit(1);
     }
 
-    int argc = launcherArgc - 1;
-    char* argv[launcherArgc];
-    argv[0] = strdup(launcherArgv[1]);
-    for (int i = 2; i < launcherArgc; ++i)
-        argv[i - 1] = strdup(launcherArgv[i]);
+    int envp_size = 0;
+    for (char** envp_itr = envp; *envp_itr != NULL; ++envp_itr)
+        envp_size++;
+
+    char** envp_copy = calloc(envp_size + 1, sizeof(char*));
+    for (int i = 0; i < envp_size; i++)
+        envp_copy[i] = strdup(envp[i]);
 
 
-    strcpy(appimage_path, launcherArgv[1]);
-    strcpy(argv0_path, launcherArgv[1]);
+    // Allow to hook up an integration assistant.
+    if (shouldIntegrationAssistantBeUsedOn(argv[1]) &&
+        tryForwardExecToIntegrationAssistant(argc, argv, envp_copy) == 0) {
+        //  A '0' return value means that the assistant took care of the execution therefore we can safely exit
+        fprintf(stdout, "AppImage execution was handled by the integration assistant\n");
+        return 0;
+    }
+
+    strcpy(appimage_path, argv[1]);
+    strcpy(argv0_path, argv[1]);
     setenv("TARGET_APPIMAGE", appimage_path, 1);
     setenv("DESKTOPINTEGRATION", "false", 1);
-    
+
 #ifdef ENABLE_SETPROCTITLE
     // load libbsd dynamically to change proc title
     // this is an optional feature, therefore we don't hard require it
@@ -578,14 +582,6 @@ int main(int launcherArgc, char* launcherArgv[]) {
     }
 #endif
 
-
-    // Allow to  hook up an integration assistant.
-    if (shouldIntegrationAssistantBeUsedOn(appimage_path) &&
-        tryForwardExecToIntegrationAssistant(argc, argv, appimage_path) == 0) {
-        //  A '0' return value means that the assistant took care of the execution therefore we can safely exit
-        fprintf(stdout, "AppImage execution was handled by the integration assistant\n");
-        return 0;
-    }
 
     // temporary directories are required in a few places
     // therefore we implement the detection of the temp base dir at the top of the code to avoid redundancy
